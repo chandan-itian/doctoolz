@@ -2,6 +2,8 @@ import { setJpegDpi } from './dpiModifier';
 
 export interface CompressionOptions {
   targetKb: number;
+  exactWidth?: number;
+  exactHeight?: number;
   maxWidth?: number;
   maxHeight?: number;
   outputFormat?: 'image/jpeg' | 'image/webp' | 'image/png';
@@ -23,7 +25,7 @@ export interface CompressionResult {
 
 /**
  * Compresses an image to be strictly under or equal to targetKb
- * Works across JPEG, WebP, and PNG.
+ * Works across JPEG, WebP, and PNG with optional exact dimension constraints.
  */
 export async function compressImageToTargetKb(
   img: HTMLImageElement,
@@ -31,6 +33,8 @@ export async function compressImageToTargetKb(
 ): Promise<CompressionResult> {
   const {
     targetKb,
+    exactWidth,
+    exactHeight,
     maxWidth = 4096,
     maxHeight = 4096,
     outputFormat = 'image/jpeg',
@@ -40,14 +44,16 @@ export async function compressImageToTargetKb(
   } = options;
 
   const targetBytes = targetKb * 1024;
-  let currentWidth = img.naturalWidth || img.width;
-  let currentHeight = img.naturalHeight || img.height;
+  let currentWidth = exactWidth || img.naturalWidth || img.width;
+  let currentHeight = exactHeight || img.naturalHeight || img.height;
 
-  // Scale down if exceeds max dimensions initially
-  if (currentWidth > maxWidth || currentHeight > maxHeight) {
-    const ratio = Math.min(maxWidth / currentWidth, maxHeight / currentHeight);
-    currentWidth = Math.round(currentWidth * ratio);
-    currentHeight = Math.round(currentHeight * ratio);
+  // Scale down if exceeds max dimensions initially (only when exact dimensions not specified)
+  if (!exactWidth && !exactHeight) {
+    if (currentWidth > maxWidth || currentHeight > maxHeight) {
+      const ratio = Math.min(maxWidth / currentWidth, maxHeight / currentHeight);
+      currentWidth = Math.round(currentWidth * ratio);
+      currentHeight = Math.round(currentHeight * ratio);
+    }
   }
 
   const canvas = document.createElement('canvas');
@@ -57,9 +63,8 @@ export async function compressImageToTargetKb(
   let bestBlob: Blob | null = null;
   let bestQuality = maxQuality;
   let scaleAttempts = 0;
-  const maxScaleAttempts = 8;
+  const maxScaleAttempts = exactWidth && exactHeight ? 4 : 8;
 
-  // Helper to convert canvas to blob promise
   const toBlobPromise = (c: HTMLCanvasElement, q: number, format: string): Promise<Blob> => {
     return new Promise((resolve, reject) => {
       c.toBlob(
@@ -87,14 +92,13 @@ export async function compressImageToTargetKb(
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
     if (outputFormat === 'image/png') {
-      // PNG is lossless in Canvas, so we scale dimensions until it fits within targetBytes
       const pngBlob = await toBlobPromise(canvas, 1.0, 'image/png');
       if (pngBlob.size <= targetBytes || currentWidth <= 60 || currentHeight <= 60) {
         bestBlob = pngBlob;
         bestQuality = 1.0;
         break;
       }
-      // Downscale aggressively based on ratio of target to actual size
+      // Downscale proportionally to fit within target
       const sizeRatio = Math.sqrt(targetBytes / pngBlob.size);
       const factor = Math.min(0.85, Math.max(0.4, sizeRatio * 0.95));
       currentWidth = Math.round(currentWidth * factor);
@@ -125,9 +129,9 @@ export async function compressImageToTargetKb(
         break;
       }
 
-      // If lowest quality still exceeds target, downscale dimensions and retry
-      currentWidth = Math.round(currentWidth * 0.82);
-      currentHeight = Math.round(currentHeight * 0.82);
+      // If lowest quality still exceeds target, downscale dimensions
+      currentWidth = Math.round(currentWidth * 0.85);
+      currentHeight = Math.round(currentHeight * 0.85);
       if (currentWidth < 40 || currentHeight < 40) {
         break;
       }
@@ -136,7 +140,7 @@ export async function compressImageToTargetKb(
     scaleAttempts++;
   }
 
-  // Fallback if not reached
+  // Fallback
   if (!bestBlob) {
     canvas.width = Math.max(currentWidth, 60);
     canvas.height = Math.max(currentHeight, 60);

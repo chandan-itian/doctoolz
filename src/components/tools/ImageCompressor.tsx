@@ -1,29 +1,106 @@
-import React, { useState } from 'react';
+import React, { useState, useCallback, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Dropzone } from '../common/Dropzone';
 import { compressImageToTargetKb, loadImageFromFile, CompressionResult } from '../../utils/imageCompressor';
 import { generateSamplePortrait } from '../../utils/sampleImages';
 import { fireConfetti } from '../common/Celebration';
-import { Download, RefreshCw, Sliders, ArrowDownRight, ArrowLeft } from 'lucide-react';
+import { Download, RefreshCw, Sliders, ArrowDownRight, ArrowLeft, Maximize2 } from 'lucide-react';
+
+type UnitType = 'px' | 'cm' | 'mm' | 'in';
 
 export const ImageCompressor: React.FC = () => {
   const { t, setActiveTool } = useApp();
   const [originalFile, setOriginalFile] = useState<File | null>(null);
+  const [loadedImg, setLoadedImg] = useState<HTMLImageElement | null>(null);
   const [originalSizeKb, setOriginalSizeKb] = useState<number>(0);
+
+  // Target KB & Format
   const [targetKb, setTargetKb] = useState<number>(50);
+  const [customKbInput, setCustomKbInput] = useState<string>('50');
   const [format, setFormat] = useState<'image/jpeg' | 'image/png' | 'image/webp'>('image/jpeg');
+
+  // Dimension settings (User customizable in px, cm, mm, in)
+  const [unit, setUnit] = useState<UnitType>('px');
+  const [widthVal, setWidthVal] = useState<number>(800);
+  const [heightVal, setHeightVal] = useState<number>(1000);
+  const [maintainAspect, setMaintainAspect] = useState<boolean>(true);
+  const [aspectRatio, setAspectRatio] = useState<number>(800 / 1000);
+
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [result, setResult] = useState<CompressionResult | null>(null);
 
   const presets = [20, 50, 100, 200, 500];
 
+  const calculatePixels = useCallback((w: number, h: number, u: UnitType, dpi: number = 300) => {
+    let pxW = w;
+    let pxH = h;
+    if (u === 'in') {
+      pxW = Math.round(w * dpi);
+      pxH = Math.round(h * dpi);
+    } else if (u === 'cm') {
+      pxW = Math.round((w / 2.54) * dpi);
+      pxH = Math.round((h / 2.54) * dpi);
+    } else if (u === 'mm') {
+      pxW = Math.round((w / 25.4) * dpi);
+      pxH = Math.round((h / 25.4) * dpi);
+    }
+    return { w: Math.max(20, Math.round(pxW)), h: Math.max(20, Math.round(pxH)) };
+  }, []);
+
+  const executeCompression = useCallback(
+    async (
+      img: HTMLImageElement,
+      kbTarget: number,
+      outFormat: 'image/jpeg' | 'image/png' | 'image/webp',
+      w: number,
+      h: number,
+      u: UnitType
+    ) => {
+      setIsProcessing(true);
+      try {
+        const { w: exactW, h: exactH } = calculatePixels(w, h, u);
+        const res = await compressImageToTargetKb(img, {
+          targetKb: kbTarget,
+          exactWidth: exactW,
+          exactHeight: exactH,
+          dpi: 300,
+          outputFormat: outFormat,
+        });
+
+        if (originalFile) {
+          const orig = Math.round((originalFile.size / 1024) * 10) / 10;
+          const reduction = Math.round(((orig - res.sizeKb) / orig) * 100);
+          res.reductionPercentage = Math.max(0, reduction);
+        }
+
+        setResult(res);
+        fireConfetti();
+      } catch (err) {
+        console.error(err);
+        alert('Error compressing image');
+      } finally {
+        setIsProcessing(false);
+      }
+    },
+    [calculatePixels, originalFile]
+  );
+
   const handleFileSelect = async (file: File) => {
     setOriginalFile(file);
     const sizeInKb = Math.round((file.size / 1024) * 10) / 10;
     setOriginalSizeKb(sizeInKb);
-    setResult(null);
 
-    await executeCompression(file, targetKb, format);
+    const img = await loadImageFromFile(file);
+    setLoadedImg(img);
+
+    const w = img.naturalWidth || 800;
+    const h = img.naturalHeight || 1000;
+    setWidthVal(w);
+    setHeightVal(h);
+    setUnit('px');
+    setAspectRatio(w / h);
+
+    await executeCompression(img, targetKb, format, w, h, 'px');
   };
 
   const handleSample = async () => {
@@ -31,56 +108,41 @@ export const ImageCompressor: React.FC = () => {
     handleFileSelect(sample);
   };
 
-  const executeCompression = async (
-    file: File,
-    kbTarget: number,
-    outFormat: 'image/jpeg' | 'image/png' | 'image/webp'
-  ) => {
-    setIsProcessing(true);
-    try {
-      const img = await loadImageFromFile(file);
-      const res = await compressImageToTargetKb(img, {
-        targetKb: kbTarget,
-        dpi: 300,
-        outputFormat: outFormat,
-      });
+  const handleWidthChange = (val: number) => {
+    setWidthVal(val);
+    if (maintainAspect && aspectRatio > 0) {
+      setHeightVal(Math.round((val / aspectRatio) * 100) / 100);
+    }
+  };
 
-      const orig = Math.round((file.size / 1024) * 10) / 10;
-      const reduction = Math.round(((orig - res.sizeKb) / orig) * 100);
-      res.reductionPercentage = Math.max(0, reduction);
-
-      setResult(res);
-      fireConfetti();
-    } catch (err) {
-      console.error(err);
-      alert('Error compressing image');
-    } finally {
-      setIsProcessing(false);
+  const handleHeightChange = (val: number) => {
+    setHeightVal(val);
+    if (maintainAspect && aspectRatio > 0) {
+      setWidthVal(Math.round(val * aspectRatio * 100) / 100);
     }
   };
 
   const handlePresetClick = (kb: number) => {
     setTargetKb(kb);
-    if (originalFile) {
-      executeCompression(originalFile, kb, format);
+    setCustomKbInput(kb.toString());
+    if (loadedImg) {
+      executeCompression(loadedImg, kb, format, widthVal, heightVal, unit);
     }
   };
 
   const handleFormatChange = (newFormat: 'image/jpeg' | 'image/png' | 'image/webp') => {
     setFormat(newFormat);
-    if (originalFile) {
-      executeCompression(originalFile, targetKb, newFormat);
+    if (loadedImg) {
+      executeCompression(loadedImg, targetKb, newFormat, widthVal, heightVal, unit);
     }
   };
 
-  const handleCustomTargetChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const val = Number(e.target.value);
-    setTargetKb(val);
-  };
-
-  const handleApplyCustom = () => {
-    if (originalFile && targetKb > 5) {
-      executeCompression(originalFile, targetKb, format);
+  const handleApplySettings = () => {
+    const parsedKb = parseFloat(customKbInput);
+    const kb = !isNaN(parsedKb) && parsedKb >= 5 ? parsedKb : targetKb;
+    setTargetKb(kb);
+    if (loadedImg) {
+      executeCompression(loadedImg, kb, format, widthVal, heightVal, unit);
     }
   };
 
@@ -139,9 +201,9 @@ export const ImageCompressor: React.FC = () => {
                 </label>
                 <div className="flex gap-2">
                   {[
-                    { id: 'image/jpeg', label: 'JPG / JPEG (Standard)' },
-                    { id: 'image/png', label: 'PNG (Lossless)' },
-                    { id: 'image/webp', label: 'WebP (Modern Web)' },
+                    { id: 'image/jpeg', label: 'JPG / JPEG' },
+                    { id: 'image/png', label: 'PNG' },
+                    { id: 'image/webp', label: 'WebP' },
                   ].map((fmt) => (
                     <button
                       key={fmt.id}
@@ -158,7 +220,7 @@ export const ImageCompressor: React.FC = () => {
                 </div>
               </div>
 
-              {/* Target File Size */}
+              {/* Target File Size (KB) */}
               <div>
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
                   {t.compressorTab.targetKbLabel}
@@ -184,29 +246,100 @@ export const ImageCompressor: React.FC = () => {
                   ))}
                 </div>
 
-                {/* Custom Target Input */}
+                {/* Custom Target KB Input */}
                 <div className="flex items-center gap-3">
                   <div className="relative flex-1 max-w-xs">
                     <input
                       type="number"
                       min="5"
                       max="10000"
-                      value={targetKb}
-                      onChange={handleCustomTargetChange}
-                      className="w-full pl-3 pr-10 py-2 rounded-xl bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 font-semibold text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      value={customKbInput}
+                      onChange={(e) => setCustomKbInput(e.target.value)}
+                      className="w-full pl-3 pr-10 py-2 rounded-xl bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 font-bold text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
                       placeholder="Enter KB"
                     />
                     <span className="absolute right-3 top-2.5 text-xs font-medium text-slate-400">
                       KB
                     </span>
                   </div>
+                  <span className="text-xs text-slate-500 dark:text-slate-400">
+                    Current Target: <strong className="text-indigo-600 dark:text-indigo-400">{targetKb} KB</strong>
+                  </span>
+                </div>
+              </div>
+
+              {/* Customizable Dimensions in px, cm, mm, in */}
+              <div className="pt-3 border-t border-slate-200 dark:border-slate-700 space-y-3">
+                <div className="flex flex-wrap items-center justify-between gap-2">
+                  <span className="text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider flex items-center gap-1.5">
+                    <Maximize2 className="w-3.5 h-3.5 text-indigo-500" />
+                    <span>Custom Dimensions (Width × Height):</span>
+                  </span>
+
+                  {/* Unit Selector */}
+                  <div className="flex bg-white dark:bg-slate-700 p-0.5 rounded-xl border border-slate-300 dark:border-slate-600 text-xs font-bold">
+                    {(['px', 'cm', 'mm', 'in'] as UnitType[]).map((u) => (
+                      <button
+                        key={u}
+                        onClick={() => setUnit(u)}
+                        className={`px-2.5 py-1 rounded-lg uppercase transition-all ${
+                          unit === u
+                            ? 'bg-indigo-600 text-white shadow-sm'
+                            : 'text-slate-600 dark:text-slate-300 hover:text-indigo-600'
+                        }`}
+                      >
+                        {u}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Width & Height Inputs */}
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                      Width ({unit}):
+                    </label>
+                    <input
+                      type="number"
+                      step={unit === 'px' ? '1' : '0.1'}
+                      value={widthVal}
+                      onChange={(e) => handleWidthChange(Number(e.target.value))}
+                      className="w-full px-3 py-2 text-sm font-bold rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs font-semibold text-slate-600 dark:text-slate-400 mb-1">
+                      Height ({unit}):
+                    </label>
+                    <input
+                      type="number"
+                      step={unit === 'px' ? '1' : '0.1'}
+                      value={heightVal}
+                      onChange={(e) => handleHeightChange(Number(e.target.value))}
+                      className="w-full px-3 py-2 text-sm font-bold rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
+                    />
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between text-xs text-slate-600 dark:text-slate-400">
+                  <label className="flex items-center gap-2 cursor-pointer font-medium">
+                    <input
+                      type="checkbox"
+                      checked={maintainAspect}
+                      onChange={(e) => setMaintainAspect(e.target.checked)}
+                      className="w-4 h-4 rounded text-indigo-600"
+                    />
+                    <span>Lock Aspect Ratio</span>
+                  </label>
+
                   <button
-                    onClick={handleApplyCustom}
+                    onClick={handleApplySettings}
                     disabled={isProcessing}
                     className="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md transition-all flex items-center gap-1.5 disabled:opacity-50"
                   >
                     <Sliders className="w-3.5 h-3.5" />
-                    <span>Apply</span>
+                    <span>Apply Custom Dimensions & Size</span>
                   </button>
                 </div>
               </div>
@@ -253,7 +386,7 @@ export const ImageCompressor: React.FC = () => {
                       {t.dimensions}
                     </span>
                     <p className="text-sm sm:text-base font-bold text-slate-700 dark:text-slate-300">
-                      {result.width} × {result.height}
+                      {result.width} × {result.height} px
                     </p>
                   </div>
                 </div>
@@ -261,7 +394,9 @@ export const ImageCompressor: React.FC = () => {
                 {/* Preview Image */}
                 <div className="flex flex-col sm:flex-row items-center justify-center gap-6 p-4 rounded-2xl bg-slate-100/70 dark:bg-slate-800/40">
                   <div className="text-center">
-                    <p className="text-xs font-semibold text-slate-500 mb-2">Compressed Result Preview</p>
+                    <p className="text-xs font-semibold text-slate-500 mb-2">
+                      Compressed Preview ({result.width} × {result.height} px • {result.sizeKb} KB)
+                    </p>
                     <img
                       src={result.dataUrl}
                       alt="Compressed preview"
@@ -285,6 +420,7 @@ export const ImageCompressor: React.FC = () => {
                   <button
                     onClick={() => {
                       setOriginalFile(null);
+                      setLoadedImg(null);
                       setResult(null);
                     }}
                     className="px-5 py-3.5 rounded-2xl font-semibold text-sm bg-slate-200 dark:bg-slate-700 text-slate-700 dark:text-slate-200 hover:bg-slate-300 dark:hover:bg-slate-600 transition-colors flex items-center gap-1.5"
