@@ -6,7 +6,7 @@ export const translations = {
     tagline: 'All-in-One Image, Passport & PDF Productivity Suite',
     privacyBadge: '100% Private & Client-Side (No Files Leave Your Device)',
     searchPlaceholder: 'Search any tool (e.g. 50KB, Passport, PDF, Signature, DPI)...',
-    popularTags: ['UPSC / SSC 50KB', 'Passport 3.5×4.5cm', '300 DPI', 'Signature 20KB', 'Photo to PDF', 'Hindi OCR'],
+    popularTags: ['UPSC / SSC 50KB', 'Passport 3.5×4.5cm', '300 DPI', 'Signature 15KB', 'Photo to PDF', 'Hindi OCR'],
     backToAllTools: '← Back to All Tools',
     dropzoneText: 'Drag & drop your file here, or',
     browseFiles: 'Browse Files',
@@ -26,7 +26,7 @@ export const translations = {
     tools: {
       compressor: {
         name: 'Compress Image to Exact KB',
-        desc: 'Reduce photo size to exactly 20KB, 50KB, 100KB, or custom KB for government exam portals without losing clarity.',
+        desc: 'Reduce photo size to exactly 20KB, 50KB, 100KB, or custom KB for government exam portals without losing clarity. Download in JPG, PNG, or WebP.',
         category: 'Image Tools',
         badge: 'Top Exam Tool',
       },
@@ -38,9 +38,9 @@ export const translations = {
       },
       signature: {
         name: 'Signature Resizer & B/W Cleaner',
-        desc: 'Resize signatures to 10KB–20KB. Auto-remove shadows, gray phone camera tints, and enhance black ink contrast.',
+        desc: 'Resize signatures to any custom KB (10KB, 12KB, 15KB, 16KB, etc.). Auto-remove paper shadows, phone camera tints, and enhance ink lines.',
         category: 'Exam Specials',
-        badge: '10-20 KB Target',
+        badge: 'Custom KB',
       },
       dimensionDpi: {
         name: 'Custom Size, DPI & Bit Depth',
@@ -49,8 +49,8 @@ export const translations = {
         badge: '300 DPI Header',
       },
       photoSignMerge: {
-        name: 'Photo & Signature Merger (DOP)',
-        desc: 'Combine candidate photo and signature with Name and Date of Photo (DOP) on one card under 50KB/100KB.',
+        name: 'Photo & Signature Merger',
+        desc: 'Combine candidate photo and signature into a single composite card with custom target KB and JPG, PNG, or WebP format.',
         category: 'Exam Specials',
         badge: 'Govt Form Card',
       },
@@ -181,6 +181,7 @@ export const translations = {
       builtFor: 'Engineered for speed, privacy, and Indian competitive exams & official paperwork.',
       privacyCommitment: 'Zero Server Uploads: All image processing, compression, and PDF conversions occur strictly inside your local browser memory.',
       rights: 'All rights reserved.',
+      madeBy: 'Made with Love, Chandan Raj',
     },
   },
 
@@ -189,7 +190,7 @@ export const translations = {
     tagline: 'ऑल-इन-वन इमेज, पासपोर्ट और पीडीएफ टूल्स सूट',
     privacyBadge: '100% प्राइवेट और क्लाइंट-साइड (आपकी फाइल्स आपके डिवाइस से बाहर नहीं जातीं)',
     searchPlaceholder: 'कोई भी टूल खोजें (जैसे: 50KB, पासपोर्ट, PDF, सिग्नेचर, 300 DPI)...',
-    popularTags: ['UPSC / SSC 50KB', 'पासपोर्ट 3.5×4.5cm', '300 DPI', 'सिग्नेचर 20KB', 'फोटो से PDF', 'हिंदी OCR'],
+    popularTags: ['UPSC / SSC 50KB', 'पासपोर्ट 3.5×4.5cm', '300 DPI', 'सिग्नेचर 15KB', 'फोटो से PDF', 'हिंदी OCR'],
     backToAllTools: '← सभी टूल्स पर वापस जाएं',
     dropzoneText: 'अपनी फाइल यहां ड्रैग और ड्रॉप करें, या',
     browseFiles: 'फ़ाइल चुनें',
@@ -209,7 +210,7 @@ export const translations = {
     tools: {
       compressor: {
         name: 'फोटो का साइज KB में कम करें',
-        desc: 'सरकारी परीक्षा पोर्टल के लिए फोटो का साइज बिना क्वालिटी खोए ठीक 20KB, 50KB, 100KB या मनचाहे साइज में कंप्रेस करें।',
+        desc: 'सरकारी परीक्षा पोर्टल के लिए फोटो का साइज बिना क्वालिटी खोए ठीक 20KB, 50KB, 100KB या मनचाहे कस्टम KB में कंप्रेस करें। JPG, PNG या WebP में डाउनलोड करें।',
         category: 'इमेज टूल्स',
         badge: 'टॉप एग्जाम टूल',
       },
@@ -221,9 +222,9 @@ export const translations = {
       },
       signature: {
         name: 'सिग्नेचर रीसाइज़र और B/W क्लीनर',
-        desc: 'सिग्नेचर को 10KB–20KB में रीसाइज करें। मोबाइल से खींची फोटो की परछाई और पीलापन हटाकर साफ़ काला और सफेद बनाएं।',
+        desc: 'सिग्नेचर को मनचाहे कस्टम साइज (10KB, 12KB, 15KB, 16KB आदि) में रीसाइज करें। मोबाइल फोटो की परछाई हटाकर साफ़ काली स्याही बनाएं।',
         category: 'एग्जाम स्पेशल',
-        badge: '10-20 KB टारगेट',
+        badge: 'कस्टम KB',
       },
       dimensionDpi: {
         name: 'कस्टम साइज, DPI और बिट डेप्थ',
@@ -232,8 +233,8 @@ export const translations = {
         badge: '300 DPI हेडर',
       },
       photoSignMerge: {
-        name: 'फोटो और सिग्नेचर मर्ज करें (DOP)',
-        desc: 'उम्मीदवार की फोटो और सिग्नेचर को नाम और फोटो की तारीख (DOP) के साथ एक ही कार्ड में 50KB/100KB के अंदर मर्ज करें।',
+        name: 'फोटो और सिग्नेचर मर्ज करें',
+        desc: 'उम्मीदवार की फोटो और सिग्नेचर को मनचाहे कस्टम KB साइज में एक ही कार्ड में मर्ज करें। JPG, PNG या WebP में डाउनलोड करें।',
         category: 'एग्जाम स्पेशल',
         badge: 'सरकारी फॉर्म कार्ड',
       },
@@ -364,6 +365,7 @@ export const translations = {
       builtFor: 'स्पीड, गोपनीयता और भारतीय प्रतियोगी परीक्षाओं व दस्तावेज़ों के लिए विशेष रूप से निर्मित।',
       privacyCommitment: 'शून्य सर्वर अपलोड: आपकी सभी फोटो, कंप्रेस और पीडीएफ कन्वर्जन आपके डिवाइस के ब्राउज़र में ही प्रोसेस होती हैं।',
       rights: 'सर्वाधिकार सुरक्षित।',
+      madeBy: 'Made with Love, Chandan Raj',
     },
   },
 };

@@ -6,7 +6,7 @@ import { setJpegDpi } from '../../utils/dpiModifier';
 import { applyBitDepthAndFilters, BitDepthMode } from '../../utils/bitDepthConverter';
 import { generateSamplePortrait } from '../../utils/sampleImages';
 import { fireConfetti } from '../common/Celebration';
-import { Download, RefreshCw, Sliders, ArrowLeft, Check, Layers } from 'lucide-react';
+import { Download, RefreshCw, ArrowLeft } from 'lucide-react';
 
 type UnitType = 'px' | 'cm' | 'mm' | 'in';
 
@@ -22,9 +22,10 @@ export const CustomDimensionDpi: React.FC = () => {
   const [maintainAspect, setMaintainAspect] = useState<boolean>(true);
   const [aspectRatio, setAspectRatio] = useState<number>(1);
 
-  // DPI & Bit Depth
+  // DPI, Bit Depth & Format
   const [dpi, setDpi] = useState<number>(300);
   const [bitDepth, setBitDepth] = useState<BitDepthMode>('24-bit');
+  const [format, setFormat] = useState<'image/jpeg' | 'image/png'>('image/jpeg');
 
   const [resultDataUrl, setResultDataUrl] = useState<string | null>(null);
   const [resultKb, setResultKb] = useState<number>(0);
@@ -48,7 +49,6 @@ export const CustomDimensionDpi: React.FC = () => {
     handleFile(sample);
   };
 
-  // Convert given unit input into pixels based on current DPI
   const calculatePixels = useCallback(
     (w: number, h: number, u: UnitType, currentDpi: number) => {
       let pxW = w;
@@ -106,29 +106,36 @@ export const CustomDimensionDpi: React.FC = () => {
         applyBitDepthAndFilters(ctx, finalW, finalH, bitDepth);
       }
 
-      // Export canvas to JPEG blob
+      // Export canvas
       canvas.toBlob(
         async (blob) => {
           if (!blob) return;
-          const arrayBuffer = await blob.arrayBuffer();
+          let finalBlob = blob;
 
-          // Inject exact JFIF DPI metadata tag
-          const withDpi = setJpegDpi(new Uint8Array(arrayBuffer), dpi);
-          const finalBlob = new Blob([withDpi as unknown as BlobPart], { type: 'image/jpeg' });
+          // Inject exact JFIF DPI metadata tag if JPEG
+          if (format === 'image/jpeg') {
+            try {
+              const arrayBuffer = await blob.arrayBuffer();
+              const withDpi = setJpegDpi(new Uint8Array(arrayBuffer), dpi);
+              finalBlob = new Blob([withDpi as unknown as BlobPart], { type: 'image/jpeg' });
+            } catch {
+              finalBlob = blob;
+            }
+          }
 
           const sizeKb = Math.round((finalBlob.size / 1024) * 10) / 10;
           setResultKb(sizeKb);
           setResultDataUrl(URL.createObjectURL(finalBlob));
           setIsProcessing(false);
         },
-        'image/jpeg',
+        format,
         0.95
       );
     } catch (err) {
       console.error(err);
       setIsProcessing(false);
     }
-  }, [loadedImg, widthVal, heightVal, unit, dpi, bitDepth, calculatePixels]);
+  }, [loadedImg, widthVal, heightVal, unit, dpi, bitDepth, format, calculatePixels]);
 
   useEffect(() => {
     if (loadedImg) {
@@ -141,7 +148,8 @@ export const CustomDimensionDpi: React.FC = () => {
     fireConfetti();
     const a = document.createElement('a');
     a.href = resultDataUrl;
-    a.download = `custom-${pixelDims.w}x${pixelDims.h}-${dpi}dpi-${bitDepth}.jpg`;
+    const ext = format === 'image/jpeg' ? 'jpg' : 'png';
+    a.download = `custom-${pixelDims.w}x${pixelDims.h}-${dpi}dpi.${ext}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -246,19 +254,44 @@ export const CustomDimensionDpi: React.FC = () => {
               </div>
             </div>
 
-            {/* DPI & Bit Depth Selector */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            {/* DPI, Bit Depth & Format Selector */}
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+              {/* Format Section */}
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
+                  Format
+                </label>
+                <div className="flex gap-2">
+                  {[
+                    { id: 'image/jpeg', label: 'JPG' },
+                    { id: 'image/png', label: 'PNG' },
+                  ].map((fmt) => (
+                    <button
+                      key={fmt.id}
+                      onClick={() => setFormat(fmt.id as 'image/jpeg' | 'image/png')}
+                      className={`flex-1 py-2 rounded-xl text-xs font-bold border transition-all ${
+                        format === fmt.id
+                          ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                          : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'
+                      }`}
+                    >
+                      {fmt.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
               {/* DPI Section */}
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-2">
                 <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
                   {t.dpiTab.dpiLabel}
                 </label>
-                <div className="grid grid-cols-4 gap-2">
+                <div className="grid grid-cols-2 gap-2">
                   {[72, 150, 200, 300].map((d) => (
                     <button
                       key={d}
                       onClick={() => setDpi(d)}
-                      className={`py-2 rounded-xl text-xs font-bold border transition-all ${
+                      className={`py-1.5 rounded-xl text-xs font-bold border transition-all ${
                         dpi === d
                           ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
                           : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-indigo-400'
@@ -268,9 +301,6 @@ export const CustomDimensionDpi: React.FC = () => {
                     </button>
                   ))}
                 </div>
-                <p className="text-[11px] text-slate-500 dark:text-slate-400 pt-1">
-                  {t.dpiTab.dpiHint}
-                </p>
               </div>
 
               {/* Bit Depth Section */}
@@ -280,14 +310,14 @@ export const CustomDimensionDpi: React.FC = () => {
                 </label>
                 <div className="space-y-1.5">
                   {[
-                    { id: '24-bit', label: t.dpiTab.color24 },
-                    { id: '8-bit-gray', label: t.dpiTab.gray8 },
-                    { id: '1-bit-bw', label: t.dpiTab.bw1 },
+                    { id: '24-bit', label: '24-bit RGB' },
+                    { id: '8-bit-gray', label: '8-bit Gray' },
+                    { id: '1-bit-bw', label: '1-bit B/W' },
                   ].map((b) => (
                     <button
                       key={b.id}
                       onClick={() => setBitDepth(b.id as BitDepthMode)}
-                      className={`w-full px-3 py-1.5 rounded-xl text-left text-xs font-semibold border transition-all ${
+                      className={`w-full px-2.5 py-1 rounded-xl text-left text-xs font-semibold border transition-all ${
                         bitDepth === b.id
                           ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
                           : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'
@@ -326,7 +356,7 @@ export const CustomDimensionDpi: React.FC = () => {
               >
                 <Download className="w-4 h-4" />
                 <span>
-                  {t.downloadResult} ({resultKb} KB)
+                  {t.downloadResult} as {format === 'image/jpeg' ? 'JPG' : 'PNG'} ({resultKb} KB)
                 </span>
               </button>
 

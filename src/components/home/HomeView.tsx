@@ -54,7 +54,7 @@ export const HomeView: React.FC = () => {
         desc: t.tools.signature.desc,
         badge: t.tools.signature.badge,
         category: 'exam',
-        keywords: ['signature', 'sign', '10kb', '20kb', 'ssc', 'upsc', 'cleaner', 'हस्ताक्षर', 'सिग्नेचर'],
+        keywords: ['signature', 'sign', '10kb', '12kb', '15kb', '16kb', '20kb', 'ssc', 'upsc', 'cleaner', 'हस्ताक्षर', 'सिग्नेचर'],
       },
       {
         id: 'dimensionDpi' as ToolId,
@@ -76,7 +76,7 @@ export const HomeView: React.FC = () => {
         desc: t.tools.photoSignMerge.desc,
         badge: t.tools.photoSignMerge.badge,
         category: 'exam',
-        keywords: ['merge', 'dop', 'date of photo', 'name', 'card', 'मर्ज', 'नाम', 'तारीख'],
+        keywords: ['merge', 'photo and signature', 'card', 'मर्ज', 'सिग्नेचर', 'फोटो'],
       },
       {
         id: 'photoToPdf' as ToolId,
@@ -134,17 +134,12 @@ export const HomeView: React.FC = () => {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 sm:py-12">
       {/* Hero Section */}
       <div className="text-center max-w-3xl mx-auto mb-12 sm:mb-16">
-        <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-indigo-50 dark:bg-indigo-950/70 border border-indigo-200 dark:border-indigo-800 text-indigo-600 dark:text-indigo-300 text-xs font-bold uppercase tracking-wider mb-4 shadow-sm">
-          <Zap className="w-3.5 h-3.5" />
-          <span>Inspired by PI7 • 100% Client-Side Processing</span>
-        </div>
-
         <h1 className="text-3xl sm:text-5xl font-black text-slate-900 dark:text-slate-100 tracking-tight leading-tight sm:leading-tight mb-4">
           {t.tagline}
         </h1>
 
         <p className="text-sm sm:text-base text-slate-600 dark:text-slate-400 max-w-2xl mx-auto mb-8 leading-relaxed">
-          Compress to exact KB, format official passport photos, change DPI/bit depth, merge signatures with DOP, convert PDF, and run Hindi OCR — directly in your browser with zero server latency.
+          Compress to exact KB, format official passport photos, change DPI/bit depth, merge photo & signature, convert PDF, and run Hindi OCR — directly in your browser with zero server uploads.
         </p>
 
         {/* Search Bar */}

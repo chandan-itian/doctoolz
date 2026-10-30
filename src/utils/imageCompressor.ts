@@ -17,12 +17,13 @@ export interface CompressionResult {
   width: number;
   height: number;
   quality: number;
+  format: 'image/jpeg' | 'image/webp' | 'image/png';
   reductionPercentage: number;
 }
 
 /**
  * Compresses an image to be strictly under or equal to targetKb
- * Uses binary search over quality and adaptive scaling.
+ * Works across JPEG, WebP, and PNG.
  */
 export async function compressImageToTargetKb(
   img: HTMLImageElement,
@@ -56,7 +57,7 @@ export async function compressImageToTargetKb(
   let bestBlob: Blob | null = null;
   let bestQuality = maxQuality;
   let scaleAttempts = 0;
-  const maxScaleAttempts = 6;
+  const maxScaleAttempts = 8;
 
   // Helper to convert canvas to blob promise
   const toBlobPromise = (c: HTMLCanvasElement, q: number, format: string): Promise<Blob> => {
@@ -73,59 +74,76 @@ export async function compressImageToTargetKb(
   };
 
   while (scaleAttempts < maxScaleAttempts) {
-    canvas.width = currentWidth;
-    canvas.height = currentHeight;
+    canvas.width = Math.max(30, currentWidth);
+    canvas.height = Math.max(30, currentHeight);
 
-    // Fill white background for transparent images when exporting as JPEG
+    // Background handling
     if (outputFormat === 'image/jpeg') {
       ctx.fillStyle = '#FFFFFF';
-      ctx.fillRect(0, 0, currentWidth, currentHeight);
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
     } else {
-      ctx.clearRect(0, 0, currentWidth, currentHeight);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
     }
-    ctx.drawImage(img, 0, 0, currentWidth, currentHeight);
+    ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
 
-    // Binary search on quality
-    let low = minQuality;
-    let high = maxQuality;
-    let localBestBlob: Blob | null = null;
-    let localBestQuality = minQuality;
+    if (outputFormat === 'image/png') {
+      // PNG is lossless in Canvas, so we scale dimensions until it fits within targetBytes
+      const pngBlob = await toBlobPromise(canvas, 1.0, 'image/png');
+      if (pngBlob.size <= targetBytes || currentWidth <= 60 || currentHeight <= 60) {
+        bestBlob = pngBlob;
+        bestQuality = 1.0;
+        break;
+      }
+      // Downscale aggressively based on ratio of target to actual size
+      const sizeRatio = Math.sqrt(targetBytes / pngBlob.size);
+      const factor = Math.min(0.85, Math.max(0.4, sizeRatio * 0.95));
+      currentWidth = Math.round(currentWidth * factor);
+      currentHeight = Math.round(currentHeight * factor);
+    } else {
+      // Binary search on quality for JPEG and WebP
+      let low = minQuality;
+      let high = maxQuality;
+      let localBestBlob: Blob | null = null;
+      let localBestQuality = minQuality;
 
-    for (let i = 0; i < 7; i++) {
-      const mid = (low + high) / 2;
-      const testBlob = await toBlobPromise(canvas, mid, outputFormat);
+      for (let i = 0; i < 7; i++) {
+        const mid = (low + high) / 2;
+        const testBlob = await toBlobPromise(canvas, mid, outputFormat);
 
-      if (testBlob.size <= targetBytes) {
-        localBestBlob = testBlob;
-        localBestQuality = mid;
-        low = mid; // Try higher quality
-      } else {
-        high = mid; // Needs more compression
+        if (testBlob.size <= targetBytes) {
+          localBestBlob = testBlob;
+          localBestQuality = mid;
+          low = mid; // Try higher quality
+        } else {
+          high = mid; // Needs more compression
+        }
+      }
+
+      if (localBestBlob && localBestBlob.size <= targetBytes) {
+        bestBlob = localBestBlob;
+        bestQuality = localBestQuality;
+        break;
+      }
+
+      // If lowest quality still exceeds target, downscale dimensions and retry
+      currentWidth = Math.round(currentWidth * 0.82);
+      currentHeight = Math.round(currentHeight * 0.82);
+      if (currentWidth < 40 || currentHeight < 40) {
+        break;
       }
     }
 
-    if (localBestBlob && localBestBlob.size <= targetBytes) {
-      bestBlob = localBestBlob;
-      bestQuality = localBestQuality;
-      break;
-    }
-
-    // If lowest quality still larger than target, reduce dimensions by 18% and retry
-    currentWidth = Math.round(currentWidth * 0.82);
-    currentHeight = Math.round(currentHeight * 0.82);
-    if (currentWidth < 50 || currentHeight < 50) {
-      // Don't shrink below usable dimensions
-      break;
-    }
     scaleAttempts++;
   }
 
-  // Fallback if even scaled image wasn't under target
+  // Fallback if not reached
   if (!bestBlob) {
-    canvas.width = Math.max(currentWidth, 80);
-    canvas.height = Math.max(currentHeight, 80);
-    ctx.fillStyle = '#FFFFFF';
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    canvas.width = Math.max(currentWidth, 60);
+    canvas.height = Math.max(currentHeight, 60);
+    if (outputFormat === 'image/jpeg') {
+      ctx.fillStyle = '#FFFFFF';
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+    }
     ctx.drawImage(img, 0, 0, canvas.width, canvas.height);
     bestBlob = await toBlobPromise(canvas, 0.05, outputFormat);
     bestQuality = 0.05;
@@ -134,9 +152,13 @@ export async function compressImageToTargetKb(
   // Inject DPI if JPEG
   let finalBlob = bestBlob;
   if (outputFormat === 'image/jpeg' && dpi) {
-    const arrayBuffer = await bestBlob.arrayBuffer();
-    const withDpi = setJpegDpi(new Uint8Array(arrayBuffer), dpi);
-    finalBlob = new Blob([withDpi as unknown as BlobPart], { type: 'image/jpeg' });
+    try {
+      const arrayBuffer = await bestBlob.arrayBuffer();
+      const withDpi = setJpegDpi(new Uint8Array(arrayBuffer), dpi);
+      finalBlob = new Blob([withDpi as unknown as BlobPart], { type: 'image/jpeg' });
+    } catch {
+      finalBlob = bestBlob;
+    }
   }
 
   const finalSizeKb = Math.round((finalBlob.size / 1024) * 10) / 10;
@@ -149,7 +171,8 @@ export async function compressImageToTargetKb(
     width: canvas.width,
     height: canvas.height,
     quality: Math.round(bestQuality * 100),
-    reductionPercentage: 0, // Calculated by caller if original size is provided
+    format: outputFormat,
+    reductionPercentage: 0,
   };
 }
 

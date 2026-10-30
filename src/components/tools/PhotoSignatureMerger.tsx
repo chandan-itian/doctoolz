@@ -3,7 +3,7 @@ import { useApp } from '../../context/AppContext';
 import { loadImageFromFile, compressImageToTargetKb } from '../../utils/imageCompressor';
 import { generateSamplePortrait, generateSampleSignature } from '../../utils/sampleImages';
 import { fireConfetti } from '../common/Celebration';
-import { Download, RefreshCw, Upload, Sparkles, ArrowLeft } from 'lucide-react';
+import { Download, RefreshCw, Upload, Sparkles, ArrowLeft, Sliders } from 'lucide-react';
 
 export const PhotoSignatureMerger: React.FC = () => {
   const { t, setActiveTool } = useApp();
@@ -13,9 +13,10 @@ export const PhotoSignatureMerger: React.FC = () => {
   const [photoImg, setPhotoImg] = useState<HTMLImageElement | null>(null);
   const [signImg, setSignImg] = useState<HTMLImageElement | null>(null);
 
-  const [name, setName] = useState<string>('RAHUL SHARMA');
-  const [dop, setDop] = useState<string>('28-10-2026');
+  // Custom Target KB
   const [targetKb, setTargetKb] = useState<number>(50);
+  const [customKbInput, setCustomKbInput] = useState<string>('50');
+  const [format, setFormat] = useState<'image/jpeg' | 'image/png' | 'image/webp'>('image/jpeg');
 
   const [resultDataUrl, setResultDataUrl] = useState<string | null>(null);
   const [resultKb, setResultKb] = useState<number>(0);
@@ -55,9 +56,9 @@ export const PhotoSignatureMerger: React.FC = () => {
     setIsProcessing(true);
 
     try {
-      // Standard card dimensions: 400px width x 600px height
+      // Standard merged card: 400px width x 560px height
       const cardWidth = 400;
-      const cardHeight = 600;
+      const cardHeight = 560;
 
       const canvas = document.createElement('canvas');
       canvas.width = cardWidth;
@@ -68,8 +69,8 @@ export const PhotoSignatureMerger: React.FC = () => {
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, 0, cardWidth, cardHeight);
 
-      // 1. Photo area (Top 65% = 390px)
-      const photoAreaHeight = 390;
+      // 1. Photo area (Top 70% = 392px)
+      const photoAreaHeight = 392;
       const pRatio = photoImg.naturalWidth / photoImg.naturalHeight;
       let pDrawW = cardWidth;
       let pDrawH = cardWidth / pRatio;
@@ -87,36 +88,25 @@ export const PhotoSignatureMerger: React.FC = () => {
       ctx.drawImage(photoImg, pOffsetX, pOffsetY, pDrawW, pDrawH);
       ctx.restore();
 
-      // 2. Name & DOP strip
-      const textStripHeight = 55;
-      const textStripY = photoAreaHeight;
-      ctx.fillStyle = '#ffffff';
-      ctx.fillRect(0, textStripY, cardWidth, textStripHeight);
-
-      // Thin separator line
+      // Thin separator line between Photo and Signature
       ctx.strokeStyle = '#000000';
-      ctx.lineWidth = 1;
-      ctx.strokeRect(0, textStripY, cardWidth, textStripHeight);
+      ctx.lineWidth = 1.5;
+      ctx.beginPath();
+      ctx.moveTo(0, photoAreaHeight);
+      ctx.lineTo(cardWidth, photoAreaHeight);
+      ctx.stroke();
 
-      ctx.fillStyle = '#000000';
-      ctx.textAlign = 'center';
-      ctx.font = 'bold 15px Inter, sans-serif';
-      ctx.fillText(name.toUpperCase(), cardWidth / 2, textStripY + 23);
-
-      ctx.font = '13px Inter, sans-serif';
-      ctx.fillText(`DOP: ${dop}`, cardWidth / 2, textStripY + 44);
-
-      // 3. Signature area (Bottom remainder = 155px)
-      const signAreaY = textStripY + textStripHeight;
+      // 2. Signature area directly below photo (Bottom 30% = 168px)
+      const signAreaY = photoAreaHeight;
       const signAreaHeight = cardHeight - signAreaY;
       ctx.fillStyle = '#ffffff';
       ctx.fillRect(0, signAreaY, cardWidth, signAreaHeight);
 
       const sRatio = signImg.naturalWidth / signImg.naturalHeight;
-      let sDrawW = cardWidth - 40;
+      let sDrawW = cardWidth - 36;
       let sDrawH = sDrawW / sRatio;
-      if (sDrawH > signAreaHeight - 16) {
-        sDrawH = signAreaHeight - 16;
+      if (sDrawH > signAreaHeight - 20) {
+        sDrawH = signAreaHeight - 20;
         sDrawW = sDrawH * sRatio;
       }
       const sOffsetX = (cardWidth - sDrawW) / 2;
@@ -129,9 +119,9 @@ export const PhotoSignatureMerger: React.FC = () => {
       ctx.lineWidth = 2;
       ctx.strokeRect(1, 1, cardWidth - 2, cardHeight - 2);
 
-      // Compress to target KB
+      // Convert canvas to image and compress strictly to custom target KB
       const tempImg = new Image();
-      const tempUrl = canvas.toDataURL('image/jpeg', 0.95);
+      const tempUrl = canvas.toDataURL(format, 0.95);
       await new Promise((res) => {
         tempImg.onload = res;
         tempImg.src = tempUrl;
@@ -140,7 +130,7 @@ export const PhotoSignatureMerger: React.FC = () => {
       const compressed = await compressImageToTargetKb(tempImg, {
         targetKb: targetKb,
         dpi: 300,
-        outputFormat: 'image/jpeg',
+        outputFormat: format,
       });
 
       setResultKb(compressed.sizeKb);
@@ -150,7 +140,7 @@ export const PhotoSignatureMerger: React.FC = () => {
     } finally {
       setIsProcessing(false);
     }
-  }, [photoImg, signImg, name, dop, targetKb]);
+  }, [photoImg, signImg, targetKb, format]);
 
   useEffect(() => {
     if (photoImg && signImg) {
@@ -158,12 +148,20 @@ export const PhotoSignatureMerger: React.FC = () => {
     }
   }, [mergeCard, photoImg, signImg]);
 
+  const handleApplyCustomKb = () => {
+    const val = parseFloat(customKbInput);
+    if (!isNaN(val) && val >= 5) {
+      setTargetKb(val);
+    }
+  };
+
   const handleDownload = () => {
     if (!resultDataUrl) return;
     fireConfetti();
     const a = document.createElement('a');
     a.href = resultDataUrl;
-    a.download = `photo-sign-card-${resultKb}kb.jpg`;
+    const ext = format === 'image/jpeg' ? 'jpg' : format === 'image/png' ? 'png' : 'webp';
+    a.download = `photo-signature-merged-${resultKb}kb.${ext}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -213,7 +211,7 @@ export const PhotoSignatureMerger: React.FC = () => {
               </label>
               <label className="flex items-center justify-center gap-2 p-3 rounded-xl border border-dashed border-indigo-300 dark:border-indigo-700 bg-white dark:bg-slate-700 cursor-pointer text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50/50">
                 <Upload className="w-4 h-4" />
-                <span>{photoFile ? photoFile.name : 'Choose Photo File'}</span>
+                <span>{photoFile ? photoFile.name : 'Choose Candidate Photo'}</span>
                 <input type="file" accept="image/*" onChange={handlePhotoUpload} className="hidden" />
               </label>
             </div>
@@ -225,58 +223,72 @@ export const PhotoSignatureMerger: React.FC = () => {
               </label>
               <label className="flex items-center justify-center gap-2 p-3 rounded-xl border border-dashed border-indigo-300 dark:border-indigo-700 bg-white dark:bg-slate-700 cursor-pointer text-xs font-semibold text-indigo-600 dark:text-indigo-400 hover:bg-indigo-50/50">
                 <Upload className="w-4 h-4" />
-                <span>{signFile ? signFile.name : 'Choose Signature File'}</span>
+                <span>{signFile ? signFile.name : 'Choose Candidate Signature'}</span>
                 <input type="file" accept="image/*" onChange={handleSignUpload} className="hidden" />
               </label>
             </div>
 
-            {/* Candidate Name & Date */}
-            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
+            {/* Custom Target Combined Size & Format Controls */}
+            <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-4">
+              {/* Format selection */}
               <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  {t.mergerTab.candidateName}
-                </label>
-                <input
-                  type="text"
-                  value={name}
-                  onChange={(e) => setName(e.target.value)}
-                  placeholder={t.mergerTab.namePlaceholder}
-                  className="w-full px-3 py-2 text-xs font-bold rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  {t.mergerTab.dop}
-                </label>
-                <input
-                  type="text"
-                  value={dop}
-                  onChange={(e) => setDop(e.target.value)}
-                  placeholder={t.mergerTab.dopPlaceholder}
-                  className="w-full px-3 py-2 text-xs font-bold rounded-xl border border-slate-300 dark:border-slate-600 bg-white dark:bg-slate-700 text-slate-900 dark:text-slate-100"
-                />
-              </div>
-
-              <div>
-                <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 mb-1">
-                  {t.mergerTab.targetSize} <span className="text-indigo-600 font-bold">{targetKb} KB</span>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                  Download Format:
                 </label>
                 <div className="flex gap-2">
-                  {[30, 50, 100, 200].map((kb) => (
+                  {[
+                    { id: 'image/jpeg', label: 'JPG' },
+                    { id: 'image/png', label: 'PNG' },
+                    { id: 'image/webp', label: 'WebP' },
+                  ].map((fmt) => (
                     <button
-                      key={kb}
-                      onClick={() => setTargetKb(kb)}
-                      className={`flex-1 py-1 rounded-lg text-xs font-bold border transition-all ${
-                        targetKb === kb
-                          ? 'bg-indigo-600 text-white border-indigo-600'
+                      key={fmt.id}
+                      onClick={() => setFormat(fmt.id as 'image/jpeg' | 'image/png' | 'image/webp')}
+                      className={`flex-1 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                        format === fmt.id
+                          ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
                           : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'
                       }`}
                     >
-                      {kb} KB
+                      {fmt.label}
                     </button>
                   ))}
                 </div>
+              </div>
+
+              {/* Custom Size in KB */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                  Custom Combined Target Size (KB):
+                </label>
+                <div className="flex items-center gap-2 mb-2">
+                  <div className="relative flex-1">
+                    <input
+                      type="number"
+                      min="5"
+                      max="1000"
+                      step="1"
+                      value={customKbInput}
+                      onChange={(e) => setCustomKbInput(e.target.value)}
+                      className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 font-bold text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      placeholder="e.g. 30, 50, 80, 100 KB"
+                    />
+                    <span className="absolute right-3 top-2.5 text-xs font-medium text-slate-400">
+                      KB
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleApplyCustomKb}
+                    disabled={isProcessing}
+                    className="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md transition-all flex items-center gap-1.5 disabled:opacity-50"
+                  >
+                    <Sliders className="w-3.5 h-3.5" />
+                    <span>Set KB</span>
+                  </button>
+                </div>
+                <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                  Target size set to: <strong className="text-indigo-600 dark:text-indigo-400 font-bold">{targetKb} KB</strong> (Customizable by candidate)
+                </p>
               </div>
             </div>
           </div>
@@ -285,7 +297,7 @@ export const PhotoSignatureMerger: React.FC = () => {
           <div className="flex flex-col items-center justify-between space-y-6">
             <div className="p-4 rounded-2xl bg-slate-100/70 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center w-full">
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
-                Combined Card Output Preview ({resultKb} KB)
+                Combined Output Preview ({resultKb} KB • {format === 'image/jpeg' ? 'JPG' : format === 'image/png' ? 'PNG' : 'WebP'})
               </span>
 
               {resultDataUrl ? (
@@ -310,7 +322,7 @@ export const PhotoSignatureMerger: React.FC = () => {
               >
                 <Download className="w-4 h-4" />
                 <span>
-                  {t.downloadResult} ({resultKb} KB)
+                  {t.downloadResult} as {format === 'image/jpeg' ? 'JPG' : format === 'image/png' ? 'PNG' : 'WebP'} ({resultKb} KB)
                 </span>
               </button>
             </div>

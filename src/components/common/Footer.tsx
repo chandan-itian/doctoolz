@@ -60,8 +60,10 @@ export const Footer: React.FC = () => {
 
         <div className="pt-6 border-t border-slate-200/80 dark:border-slate-800 flex flex-col sm:flex-row items-center justify-between text-xs text-slate-500 dark:text-slate-400 gap-3">
           <p>© {new Date().getFullYear()} {t.brand}. {t.footer.rights}</p>
-          <p className="flex items-center gap-1">
-            Engineered with <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500" /> for job applicants & creators
+          <p className="flex items-center gap-1.5 font-semibold text-slate-700 dark:text-slate-300">
+            <span>Made with</span>
+            <Heart className="w-3.5 h-3.5 text-rose-500 fill-rose-500 animate-pulse" />
+            <span>by Chandan Raj</span>
           </p>
         </div>
       </div>

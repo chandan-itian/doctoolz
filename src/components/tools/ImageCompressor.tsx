@@ -4,13 +4,14 @@ import { Dropzone } from '../common/Dropzone';
 import { compressImageToTargetKb, loadImageFromFile, CompressionResult } from '../../utils/imageCompressor';
 import { generateSamplePortrait } from '../../utils/sampleImages';
 import { fireConfetti } from '../common/Celebration';
-import { Download, RefreshCw, Sliders, CheckCircle, ArrowDownRight, ArrowLeft } from 'lucide-react';
+import { Download, RefreshCw, Sliders, ArrowDownRight, ArrowLeft } from 'lucide-react';
 
 export const ImageCompressor: React.FC = () => {
   const { t, setActiveTool } = useApp();
   const [originalFile, setOriginalFile] = useState<File | null>(null);
   const [originalSizeKb, setOriginalSizeKb] = useState<number>(0);
   const [targetKb, setTargetKb] = useState<number>(50);
+  const [format, setFormat] = useState<'image/jpeg' | 'image/png' | 'image/webp'>('image/jpeg');
   const [isProcessing, setIsProcessing] = useState<boolean>(false);
   const [result, setResult] = useState<CompressionResult | null>(null);
 
@@ -22,8 +23,7 @@ export const ImageCompressor: React.FC = () => {
     setOriginalSizeKb(sizeInKb);
     setResult(null);
 
-    // Auto run compression with current target
-    await executeCompression(file, targetKb);
+    await executeCompression(file, targetKb, format);
   };
 
   const handleSample = async () => {
@@ -31,14 +31,18 @@ export const ImageCompressor: React.FC = () => {
     handleFileSelect(sample);
   };
 
-  const executeCompression = async (file: File, kbTarget: number) => {
+  const executeCompression = async (
+    file: File,
+    kbTarget: number,
+    outFormat: 'image/jpeg' | 'image/png' | 'image/webp'
+  ) => {
     setIsProcessing(true);
     try {
       const img = await loadImageFromFile(file);
       const res = await compressImageToTargetKb(img, {
         targetKb: kbTarget,
         dpi: 300,
-        outputFormat: 'image/jpeg',
+        outputFormat: outFormat,
       });
 
       const orig = Math.round((file.size / 1024) * 10) / 10;
@@ -58,7 +62,14 @@ export const ImageCompressor: React.FC = () => {
   const handlePresetClick = (kb: number) => {
     setTargetKb(kb);
     if (originalFile) {
-      executeCompression(originalFile, kb);
+      executeCompression(originalFile, kb, format);
+    }
+  };
+
+  const handleFormatChange = (newFormat: 'image/jpeg' | 'image/png' | 'image/webp') => {
+    setFormat(newFormat);
+    if (originalFile) {
+      executeCompression(originalFile, targetKb, newFormat);
     }
   };
 
@@ -69,7 +80,7 @@ export const ImageCompressor: React.FC = () => {
 
   const handleApplyCustom = () => {
     if (originalFile && targetKb > 5) {
-      executeCompression(originalFile, targetKb);
+      executeCompression(originalFile, targetKb, format);
     }
   };
 
@@ -78,7 +89,8 @@ export const ImageCompressor: React.FC = () => {
     const a = document.createElement('a');
     a.href = result.dataUrl;
     const originalBaseName = originalFile?.name.replace(/\.[^/.]+$/, '') || 'photo';
-    a.download = `${originalBaseName}-${result.sizeKb}kb.jpg`;
+    const ext = format === 'image/jpeg' ? 'jpg' : format === 'image/png' ? 'png' : 'webp';
+    a.download = `${originalBaseName}-${result.sizeKb}kb.${ext}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -118,56 +130,85 @@ export const ImageCompressor: React.FC = () => {
           />
         ) : (
           <div className="space-y-6">
-            {/* Target Size Controls */}
-            <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700">
-              <label className="block text-xs font-semibold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                {t.compressorTab.targetKbLabel}
-              </label>
-
-              {/* Quick Presets */}
-              <div className="flex flex-wrap items-center gap-2 mb-4">
-                <span className="text-xs text-slate-500 dark:text-slate-400 font-medium mr-1">
-                  {t.compressorTab.commonPresets}
-                </span>
-                {presets.map((kb) => (
-                  <button
-                    key={kb}
-                    onClick={() => handlePresetClick(kb)}
-                    className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
-                      targetKb === kb
-                        ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25 scale-105'
-                        : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 hover:border-indigo-400'
-                    }`}
-                  >
-                    {kb} KB
-                  </button>
-                ))}
+            {/* Target Size & Format Controls */}
+            <div className="p-4 sm:p-5 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-4">
+              {/* Output Format Selector */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                  Download Format:
+                </label>
+                <div className="flex gap-2">
+                  {[
+                    { id: 'image/jpeg', label: 'JPG / JPEG (Standard)' },
+                    { id: 'image/png', label: 'PNG (Lossless)' },
+                    { id: 'image/webp', label: 'WebP (Modern Web)' },
+                  ].map((fmt) => (
+                    <button
+                      key={fmt.id}
+                      onClick={() => handleFormatChange(fmt.id as 'image/jpeg' | 'image/png' | 'image/webp')}
+                      className={`px-3.5 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                        format === fmt.id
+                          ? 'bg-indigo-600 text-white border-indigo-600 shadow-md shadow-indigo-500/20'
+                          : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border-slate-200 dark:border-slate-600 hover:border-indigo-400'
+                      }`}
+                    >
+                      {fmt.label}
+                    </button>
+                  ))}
+                </div>
               </div>
 
-              {/* Custom Target Input */}
-              <div className="flex items-center gap-3">
-                <div className="relative flex-1 max-w-xs">
-                  <input
-                    type="number"
-                    min="5"
-                    max="10000"
-                    value={targetKb}
-                    onChange={handleCustomTargetChange}
-                    className="w-full pl-3 pr-10 py-2 rounded-xl bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 font-semibold text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
-                    placeholder="Enter KB"
-                  />
-                  <span className="absolute right-3 top-2.5 text-xs font-medium text-slate-400">
-                    KB
+              {/* Target File Size */}
+              <div>
+                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                  {t.compressorTab.targetKbLabel}
+                </label>
+
+                {/* Quick Presets */}
+                <div className="flex flex-wrap items-center gap-2 mb-3">
+                  <span className="text-xs text-slate-500 dark:text-slate-400 font-medium mr-1">
+                    {t.compressorTab.commonPresets}
                   </span>
+                  {presets.map((kb) => (
+                    <button
+                      key={kb}
+                      onClick={() => handlePresetClick(kb)}
+                      className={`px-3 py-1.5 rounded-xl text-xs font-bold transition-all ${
+                        targetKb === kb
+                          ? 'bg-indigo-600 text-white shadow-md shadow-indigo-500/25 scale-105'
+                          : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-200 border border-slate-200 dark:border-slate-600 hover:border-indigo-400'
+                      }`}
+                    >
+                      {kb} KB
+                    </button>
+                  ))}
                 </div>
-                <button
-                  onClick={handleApplyCustom}
-                  disabled={isProcessing}
-                  className="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md transition-all flex items-center gap-1.5 disabled:opacity-50"
-                >
-                  <Sliders className="w-3.5 h-3.5" />
-                  <span>Apply</span>
-                </button>
+
+                {/* Custom Target Input */}
+                <div className="flex items-center gap-3">
+                  <div className="relative flex-1 max-w-xs">
+                    <input
+                      type="number"
+                      min="5"
+                      max="10000"
+                      value={targetKb}
+                      onChange={handleCustomTargetChange}
+                      className="w-full pl-3 pr-10 py-2 rounded-xl bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 font-semibold text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                      placeholder="Enter KB"
+                    />
+                    <span className="absolute right-3 top-2.5 text-xs font-medium text-slate-400">
+                      KB
+                    </span>
+                  </div>
+                  <button
+                    onClick={handleApplyCustom}
+                    disabled={isProcessing}
+                    className="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md transition-all flex items-center gap-1.5 disabled:opacity-50"
+                  >
+                    <Sliders className="w-3.5 h-3.5" />
+                    <span>Apply</span>
+                  </button>
+                </div>
               </div>
             </div>
 
@@ -201,11 +242,10 @@ export const ImageCompressor: React.FC = () => {
                   </div>
                   <div>
                     <span className="text-[11px] text-slate-500 dark:text-slate-400 font-medium">
-                      {t.compressorTab.reduceBy}
+                      Format
                     </span>
-                    <p className="text-base sm:text-lg font-black text-indigo-600 dark:text-indigo-400 flex items-center">
-                      <ArrowDownRight className="w-4 h-4 mr-0.5" />
-                      {result.reductionPercentage}%
+                    <p className="text-base sm:text-lg font-black text-indigo-600 dark:text-indigo-400 uppercase">
+                      {format === 'image/jpeg' ? 'JPG' : format === 'image/png' ? 'PNG' : 'WebP'}
                     </p>
                   </div>
                   <div>
@@ -237,7 +277,9 @@ export const ImageCompressor: React.FC = () => {
                     className="flex-1 sm:flex-initial px-8 py-3.5 rounded-2xl font-bold text-sm bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-500 hover:to-teal-500 text-white shadow-lg shadow-emerald-500/25 flex items-center justify-center gap-2 hover:scale-[1.02] active:scale-[0.98] transition-all"
                   >
                     <Download className="w-4 h-4" />
-                    <span>{t.downloadResult} ({result.sizeKb} KB)</span>
+                    <span>
+                      {t.downloadResult} as {format === 'image/jpeg' ? 'JPG' : format === 'image/png' ? 'PNG' : 'WebP'} ({result.sizeKb} KB)
+                    </span>
                   </button>
 
                   <button

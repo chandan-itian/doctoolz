@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect, useCallback } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { useApp } from '../../context/AppContext';
 import { Dropzone } from '../common/Dropzone';
 import { loadImageFromFile } from '../../utils/imageCompressor';
@@ -6,23 +6,25 @@ import { applyBitDepthAndFilters } from '../../utils/bitDepthConverter';
 import { compressImageToTargetKb } from '../../utils/imageCompressor';
 import { generateSampleSignature } from '../../utils/sampleImages';
 import { fireConfetti } from '../common/Celebration';
-import { Download, RefreshCw, Sparkles, Sliders, ArrowLeft, Check } from 'lucide-react';
+import { Download, RefreshCw, Sparkles, Sliders, ArrowLeft } from 'lucide-react';
 
 export const SignatureResizer: React.FC = () => {
   const { t, setActiveTool } = useApp();
   const [file, setFile] = useState<File | null>(null);
   const [imgElement, setImgElement] = useState<HTMLImageElement | null>(null);
 
-  // Settings
-  const [targetKb, setTargetKb] = useState<number>(15); // Standard 10-20KB
+  // Custom Target KB (Not just predefined!)
+  const [targetKb, setTargetKb] = useState<number>(15);
+  const [customKbInput, setCustomKbInput] = useState<string>('15');
+  const [format, setFormat] = useState<'image/jpeg' | 'image/png'>('image/jpeg');
+
   const [presetDims, setPresetDims] = useState<{ width: number; height: number; name: string }>({
     width: 140,
     height: 60,
     name: '140 × 60 px (SSC / IBPS)',
   });
   const [enableCleaner, setEnableCleaner] = useState<boolean>(true);
-  const [threshold, setThreshold] = useState<number>(185); // 0-255
-  const [inkColor, setInkColor] = useState<'black' | 'original'>('black');
+  const [threshold, setThreshold] = useState<number>(185);
 
   const [resultDataUrl, setResultDataUrl] = useState<string | null>(null);
   const [resultKb, setResultKb] = useState<number>(0);
@@ -82,16 +84,16 @@ export const SignatureResizer: React.FC = () => {
 
       // Convert canvas to image element for KB compression
       const processedImg = new Image();
-      const tempUrl = canvas.toDataURL('image/jpeg', 0.95);
+      const tempUrl = canvas.toDataURL(format, 0.95);
       await new Promise((resolve) => {
         processedImg.onload = resolve;
         processedImg.src = tempUrl;
       });
 
-      // Compress strictly to target KB (e.g. 15KB)
+      // Compress strictly to custom target KB
       const compressed = await compressImageToTargetKb(processedImg, {
         targetKb: targetKb,
-        outputFormat: 'image/jpeg',
+        outputFormat: format,
         dpi: 200,
       });
 
@@ -102,7 +104,7 @@ export const SignatureResizer: React.FC = () => {
     } finally {
       setIsProcessing(false);
     }
-  }, [imgElement, presetDims, enableCleaner, threshold, targetKb]);
+  }, [imgElement, presetDims, enableCleaner, threshold, targetKb, format]);
 
   useEffect(() => {
     if (imgElement) {
@@ -110,12 +112,20 @@ export const SignatureResizer: React.FC = () => {
     }
   }, [processSignature, imgElement]);
 
+  const handleApplyCustomKb = () => {
+    const parsed = parseFloat(customKbInput);
+    if (!isNaN(parsed) && parsed >= 3) {
+      setTargetKb(parsed);
+    }
+  };
+
   const handleDownload = () => {
     if (!resultDataUrl) return;
     fireConfetti();
     const a = document.createElement('a');
     a.href = resultDataUrl;
-    a.download = `signature-${resultKb}kb.jpg`;
+    const ext = format === 'image/jpeg' ? 'jpg' : 'png';
+    a.download = `signature-${resultKb}kb.${ext}`;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -156,53 +166,92 @@ export const SignatureResizer: React.FC = () => {
           <div className="space-y-6">
             {/* Controls */}
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              {/* Presets & Dimensions */}
+              {/* Dimensions & Format */}
               <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-3">
-                <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider">
-                  {t.signatureTab.dimensions}
-                </label>
-                <div className="space-y-2">
-                  {[
-                    { width: 140, height: 60, name: '140 × 60 px (SSC / Banking standard)' },
-                    { width: 200, height: 100, name: '200 × 100 px (Railway / UPSC standard)' },
-                    { width: 280, height: 120, name: '280 × 120 px (High Resolution)' },
-                  ].map((dim) => (
-                    <button
-                      key={dim.name}
-                      onClick={() => setPresetDims(dim)}
-                      className={`w-full p-2.5 rounded-xl text-left text-xs font-semibold border transition-all ${
-                        presetDims.name === dim.name
-                          ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
-                          : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-indigo-400'
-                      }`}
-                    >
-                      {dim.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
-
-              {/* Target Size & Cleaner */}
-              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-4">
                 <div>
                   <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
-                    {t.signatureTab.targetSize} <span className="text-indigo-600 font-extrabold">{targetKb} KB</span>
+                    Format:
                   </label>
                   <div className="flex gap-2">
-                    {[10, 15, 20, 30].map((kb) => (
+                    {[
+                      { id: 'image/jpeg', label: 'JPG' },
+                      { id: 'image/png', label: 'PNG' },
+                    ].map((f) => (
                       <button
-                        key={kb}
-                        onClick={() => setTargetKb(kb)}
-                        className={`flex-1 py-1.5 rounded-lg text-xs font-bold border transition-all ${
-                          targetKb === kb
-                            ? 'bg-indigo-600 text-white border-indigo-600'
+                        key={f.id}
+                        onClick={() => setFormat(f.id as 'image/jpeg' | 'image/png')}
+                        className={`flex-1 py-1.5 rounded-xl text-xs font-bold border transition-all ${
+                          format === f.id
+                            ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
                             : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600'
                         }`}
                       >
-                        {kb} KB
+                        {f.label}
                       </button>
                     ))}
                   </div>
+                </div>
+
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                    {t.signatureTab.dimensions}
+                  </label>
+                  <div className="space-y-2">
+                    {[
+                      { width: 140, height: 60, name: '140 × 60 px (SSC / Banking standard)' },
+                      { width: 200, height: 100, name: '200 × 100 px (Railway / UPSC standard)' },
+                      { width: 280, height: 120, name: '280 × 120 px (High Resolution)' },
+                    ].map((dim) => (
+                      <button
+                        key={dim.name}
+                        onClick={() => setPresetDims(dim)}
+                        className={`w-full p-2 rounded-xl text-left text-xs font-semibold border transition-all ${
+                          presetDims.name === dim.name
+                            ? 'bg-indigo-600 text-white border-indigo-600 shadow-sm'
+                            : 'bg-white dark:bg-slate-700 text-slate-700 dark:text-slate-300 border-slate-200 dark:border-slate-600 hover:border-indigo-400'
+                        }`}
+                      >
+                        {dim.name}
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
+              {/* Custom Target Size & Cleaner */}
+              <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800/60 border border-slate-200 dark:border-slate-700 space-y-4">
+                <div>
+                  <label className="block text-xs font-bold text-slate-700 dark:text-slate-300 uppercase tracking-wider mb-2">
+                    Custom Target Size (KB):
+                  </label>
+                  <div className="flex items-center gap-2 mb-2">
+                    <div className="relative flex-1">
+                      <input
+                        type="number"
+                        min="3"
+                        max="500"
+                        step="1"
+                        value={customKbInput}
+                        onChange={(e) => setCustomKbInput(e.target.value)}
+                        className="w-full px-3 py-2 rounded-xl bg-white dark:bg-slate-700 border border-slate-300 dark:border-slate-600 text-slate-900 dark:text-slate-100 font-bold text-sm focus:ring-2 focus:ring-indigo-500 focus:outline-none"
+                        placeholder="e.g. 10, 12, 15, 16 KB"
+                      />
+                      <span className="absolute right-3 top-2.5 text-xs font-medium text-slate-400">
+                        KB
+                      </span>
+                    </div>
+                    <button
+                      onClick={handleApplyCustomKb}
+                      disabled={isProcessing}
+                      className="px-4 py-2 rounded-xl text-xs font-bold bg-indigo-600 hover:bg-indigo-500 text-white shadow-md transition-all flex items-center gap-1.5 disabled:opacity-50"
+                    >
+                      <Sliders className="w-3.5 h-3.5" />
+                      <span>Set KB</span>
+                    </button>
+                  </div>
+                  <p className="text-[11px] text-slate-500 dark:text-slate-400">
+                    Target set to: <strong className="text-indigo-600 dark:text-indigo-400 font-bold">{targetKb} KB</strong> (Type 10, 12, 15, 16 or any custom number)
+                  </p>
                 </div>
 
                 {/* Cleaner switch */}
@@ -244,7 +293,7 @@ export const SignatureResizer: React.FC = () => {
             {/* Preview Box */}
             <div className="p-6 rounded-2xl bg-slate-100/70 dark:bg-slate-800/40 border border-slate-200 dark:border-slate-700 flex flex-col items-center justify-center">
               <span className="text-xs font-bold text-slate-500 uppercase tracking-wider mb-3">
-                Signature Output Preview ({presetDims.width} × {presetDims.height} px • {resultKb} KB)
+                Signature Output Preview ({presetDims.width} × {presetDims.height} px • {resultKb} KB • {format === 'image/jpeg' ? 'JPG' : 'PNG'})
               </span>
 
               {resultDataUrl ? (
@@ -269,7 +318,7 @@ export const SignatureResizer: React.FC = () => {
               >
                 <Download className="w-4 h-4" />
                 <span>
-                  {t.downloadResult} ({resultKb} KB)
+                  {t.downloadResult} as {format === 'image/jpeg' ? 'JPG' : 'PNG'} ({resultKb} KB)
                 </span>
               </button>
 
