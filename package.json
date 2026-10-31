@@ -10,11 +10,16 @@
     "deploy": "npm run build && touch dist/.nojekyll && cd dist && git init && git config user.name 'DocToolz Developer' && git config user.email 'developer@doctoolz.local' && git checkout -b gh-pages && git add -A && git commit -m 'deploy: update gh-pages' && git push -f https://github.com/chandan-itian/doctoolz.git gh-pages && rm -rf .git"
   },
   "dependencies": {
+    "@pdfsmaller/pdf-decrypt": "^1.0.1",
+    "@pdfsmaller/pdf-encrypt": "^1.2.0",
     "@types/canvas-confetti": "^1.9.0",
+    "@types/qrcode": "^1.5.6",
     "canvas-confetti": "^1.9.4",
+    "jsqr": "^1.4.0",
     "lucide-react": "^1.65.0",
     "pdf-lib": "^1.17.1",
     "pdfjs-dist": "^6.4.299",
+    "qrcode": "^1.5.4",
     "react": "^19.3.1",
     "react-dom": "^19.3.1",
     "tesseract.js": "^7.0.0"

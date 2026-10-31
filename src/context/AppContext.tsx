@@ -2,6 +2,7 @@ import React, { createContext, useContext, useState, useEffect } from 'react';
 import { Language, translations } from '../i18n/translations';
 
 export type ToolId =
+  // Original 8 Core Tools
   | 'compressor'
   | 'passport'
   | 'signature'
@@ -9,7 +10,23 @@ export type ToolId =
   | 'photoSignMerge'
   | 'photoToPdf'
   | 'pdfToPhoto'
-  | 'ocr';
+  | 'ocr'
+  // Category 1: Exam & Student Form Essentials
+  | 'sizeIncreaser'
+  | 'ageCalculator'
+  | 'cgpaCalculator'
+  | 'signaturePad'
+  // Category 2: Advanced PDF Utilities
+  | 'pdfCompressor'
+  | 'pdfMerger'
+  | 'pdfSplitter'
+  | 'pdfPassword'
+  // Category 3: Document Safety & Privacy
+  | 'watermarkStamper'
+  | 'documentRedactor'
+  // Category 4: Productivity Utilities (Items 11 & 12)
+  | 'qrTools'
+  | 'imageCropper';
 
 interface AppContextType {
   language: Language;
@@ -28,7 +45,7 @@ const AppContext = createContext<AppContextType | undefined>(undefined);
 export const AppProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [language, setLanguageState] = useState<Language>(() => {
     const saved = localStorage.getItem('doctoolz_lang');
-    return (saved === 'hi' || saved === 'en') ? saved : 'hi'; // Default Hindi for user convenience
+    return saved === 'hi' || saved === 'en' ? saved : 'hi'; // Default Hindi for user convenience
   });
 
   const [theme, setThemeState] = useState<'light' | 'dark'>(() => {
