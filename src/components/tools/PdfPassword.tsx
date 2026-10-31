@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ToolHeader } from '../common/ToolHeader';
-import { KeyRound, Upload, Download, Eye, EyeOff, Lock, CheckCircle2, RefreshCw } from 'lucide-react';
+import { KeyRound, Upload, Download, Eye, EyeOff, Lock, CheckCircle2, RefreshCw, Sparkles } from 'lucide-react';
 import { protectPdfFile } from '../../utils/pdfAdvanced';
+import { generateSamplePdf } from '../../utils/sampleImages';
 import confetti from 'canvas-confetti';
 
 export const PdfPassword: React.FC = () => {
@@ -20,6 +21,22 @@ export const PdfPassword: React.FC = () => {
     if (selected && selected.type === 'application/pdf') {
       setFile(selected);
       setResult(null);
+    }
+  };
+
+  const handleSample = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsProcessing(true);
+    try {
+      const sample = await generateSamplePdf(2);
+      setFile(sample);
+      setPassword('demo123');
+      setConfirmPassword('demo123');
+      setResult(null);
+    } catch (err) {
+      console.error('Error generating sample PDF:', err);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -90,7 +107,16 @@ export const PdfPassword: React.FC = () => {
             <p className="font-semibold text-slate-800 dark:text-slate-100 text-base mb-1">
               {language === 'hi' ? 'PDF फाइल चुनें जिसमें पासवर्ड लगाना है' : 'Upload PDF to Password Protect'}
             </p>
-            <p className="text-xs text-slate-400">100% In-Browser AES Military-Grade Encryption</p>
+            <p className="text-xs text-slate-400 mb-3">100% In-Browser AES Military-Grade Encryption</p>
+
+            <button
+              type="button"
+              onClick={handleSample}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 dark:hover:bg-purple-900/60 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 text-xs font-semibold shadow-sm transition-all cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{language === 'hi' ? '✨ सैंपल डेमो PDF आज़माएं' : '✨ Try Demo PDF Document'}</span>
+            </button>
           </div>
         ) : (
           <div className="space-y-6">

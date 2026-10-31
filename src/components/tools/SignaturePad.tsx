@@ -103,6 +103,34 @@ export const SignaturePad: React.FC = () => {
     setHasContent(false);
   };
 
+  const loadDemoSignature = () => {
+    const canvas = canvasRef.current;
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d');
+    if (!ctx) return;
+
+    clearCanvas();
+    ctx.strokeStyle = penColor;
+    ctx.lineWidth = lineWidth * 1.5;
+    ctx.lineCap = 'round';
+    ctx.lineJoin = 'round';
+
+    ctx.beginPath();
+    ctx.moveTo(80, 150);
+    ctx.bezierCurveTo(120, 80, 160, 60, 200, 140);
+    ctx.bezierCurveTo(240, 210, 260, 120, 310, 110);
+    ctx.bezierCurveTo(360, 100, 370, 180, 420, 130);
+    ctx.bezierCurveTo(460, 90, 490, 140, 520, 120);
+    ctx.stroke();
+
+    ctx.beginPath();
+    ctx.moveTo(110, 180);
+    ctx.bezierCurveTo(250, 190, 390, 175, 500, 180);
+    ctx.stroke();
+
+    setHasContent(true);
+  };
+
   const downloadSignature = () => {
     const canvas = canvasRef.current;
     if (!canvas || !hasContent) return;
@@ -253,6 +281,13 @@ export const SignaturePad: React.FC = () => {
             >
               <Trash2 className="w-3.5 h-3.5" />
               <span>Clear</span>
+            </button>
+            <button
+              onClick={loadDemoSignature}
+              className="px-3.5 py-2 text-xs font-semibold bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 text-indigo-700 dark:text-indigo-300 rounded-xl flex items-center gap-1.5 transition-colors border border-indigo-200 dark:border-indigo-800"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-indigo-500" />
+              <span>{language === 'hi' ? '✨ डेमो सिग्नेचर भरें' : '✨ Try Demo Signature'}</span>
             </button>
           </div>
 

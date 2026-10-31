@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ToolHeader } from '../common/ToolHeader';
-import { FilePlus, Upload, Download, ArrowUp, ArrowDown, Trash2, CheckCircle2, RefreshCw } from 'lucide-react';
+import { FilePlus, Upload, Download, ArrowUp, ArrowDown, Trash2, CheckCircle2, RefreshCw, Sparkles } from 'lucide-react';
 import { mergePdfFiles } from '../../utils/pdfAdvanced';
+import { generateTwoSamplePdfs } from '../../utils/sampleImages';
 import confetti from 'canvas-confetti';
 
 export const PdfMerger: React.FC = () => {
@@ -17,6 +18,20 @@ export const PdfMerger: React.FC = () => {
       const added = Array.from(e.target.files).filter((f) => f.type === 'application/pdf');
       setFiles((prev) => [...prev, ...added]);
       setResult(null);
+    }
+  };
+
+  const handleSample = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsProcessing(true);
+    try {
+      const [f1, f2] = await generateTwoSamplePdfs();
+      setFiles([f1, f2]);
+      setResult(null);
+    } catch (err) {
+      console.error('Error generating sample PDFs:', err);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -109,9 +124,18 @@ export const PdfMerger: React.FC = () => {
           <p className="font-semibold text-slate-800 dark:text-slate-100 text-sm mb-1">
             {language === 'hi' ? 'PDF फाइलें चुनें या ड्रैग करें' : 'Choose or Drag PDF Files'}
           </p>
-          <p className="text-xs text-slate-400">
+          <p className="text-xs text-slate-400 mb-3">
             {language === 'hi' ? 'आप एक साथ 2 या अधिक PDF चुन सकते हैं' : 'Select 2 or more PDF files to combine'}
           </p>
+
+          <button
+            type="button"
+            onClick={handleSample}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-orange-50 dark:bg-orange-950/60 hover:bg-orange-100 dark:hover:bg-orange-900/60 border border-orange-200 dark:border-orange-800 text-orange-700 dark:text-orange-300 text-xs font-semibold shadow-sm transition-all cursor-pointer"
+          >
+            <Sparkles className="w-3.5 h-3.5" />
+            <span>{language === 'hi' ? '✨ 2 सैंपल PDF लोड करें (Demo Merge)' : '✨ Load 2 Sample PDFs (Demo Merge)'}</span>
+          </button>
         </div>
 
         {/* Selected Files List */}

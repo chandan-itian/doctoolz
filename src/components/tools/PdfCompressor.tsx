@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ToolHeader } from '../common/ToolHeader';
-import { FileArchive, Upload, Download, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { FileArchive, Upload, Download, RefreshCw, CheckCircle2, Sparkles } from 'lucide-react';
 import { compressPdfToTargetKb } from '../../utils/pdfAdvanced';
+import { generateSamplePdf } from '../../utils/sampleImages';
 import confetti from 'canvas-confetti';
 
 export const PdfCompressor: React.FC = () => {
@@ -19,6 +20,20 @@ export const PdfCompressor: React.FC = () => {
     if (selected && selected.type === 'application/pdf') {
       setFile(selected);
       setResult(null);
+    }
+  };
+
+  const handleSample = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsProcessing(true);
+    try {
+      const sample = await generateSamplePdf(3);
+      setFile(sample);
+      setResult(null);
+    } catch (err) {
+      console.error('Error generating sample PDF:', err);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -82,9 +97,18 @@ export const PdfCompressor: React.FC = () => {
             <p className="font-semibold text-slate-800 dark:text-slate-100 text-base mb-1">
               {language === 'hi' ? 'PDF फाइल यहां अपलोड करें' : 'Upload PDF Document'}
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 mb-3">
               {language === 'hi' ? 'मार्कशीट, जाति प्रमाण पत्र या कोई भी दस्तावेज' : 'Marksheets, Certificates, Documents'}
             </p>
+
+            <button
+              type="button"
+              onClick={handleSample}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/60 hover:bg-red-100 dark:hover:bg-red-900/60 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-semibold shadow-sm transition-all cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{language === 'hi' ? '✨ सैंपल डेमो PDF आज़माएं (3 पेज)' : '✨ Try Demo PDF (3 Pages)'}</span>
+            </button>
           </div>
         ) : (
           <div className="space-y-6">

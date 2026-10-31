@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
 import { useApp } from '../../context/AppContext';
 import { renderPdfToImages, RenderedPdfPage } from '../../utils/pdfRenderer';
+import { generateSamplePdf } from '../../utils/sampleImages';
 import { fireConfetti } from '../common/Celebration';
-import { Download, RefreshCw, Upload, FileText, ArrowLeft, Image as ImageIcon } from 'lucide-react';
+import { Download, RefreshCw, Upload, FileText, ArrowLeft, Image as ImageIcon, Sparkles } from 'lucide-react';
 
 export const PdfToPhoto: React.FC = () => {
-  const { t, setActiveTool } = useApp();
+  const { t, setActiveTool, language } = useApp();
   const [file, setFile] = useState<File | null>(null);
   const [dpi, setDpi] = useState<number>(200);
   const [format, setFormat] = useState<'image/jpeg' | 'image/png'>('image/jpeg');
@@ -21,6 +22,13 @@ export const PdfToPhoto: React.FC = () => {
       setPages([]);
       await executePdfRender(selectedFile, dpi, format);
     }
+  };
+
+  const handleSample = async () => {
+    const sample = await generateSamplePdf(2);
+    setFile(sample);
+    setPages([]);
+    await executePdfRender(sample, dpi, format);
   };
 
   const executePdfRender = async (
@@ -102,16 +110,27 @@ export const PdfToPhoto: React.FC = () => {
             <p className="text-xs text-slate-500 dark:text-slate-400 mb-5">
               Processed 100% inside your browser using Mozilla PDF.js. No server uploads.
             </p>
-            <label className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer shadow-md transition-all">
-              <Upload className="w-4 h-4" />
-              <span>Choose PDF File</span>
-              <input
-                type="file"
-                accept="application/pdf"
-                onChange={handleFileUpload}
-                className="hidden"
-              />
-            </label>
+            <div className="flex flex-wrap items-center justify-center gap-3">
+              <label className="inline-flex items-center gap-2 px-6 py-3 rounded-2xl font-bold text-sm bg-indigo-600 hover:bg-indigo-500 text-white cursor-pointer shadow-md transition-all">
+                <Upload className="w-4 h-4" />
+                <span>Choose PDF File</span>
+                <input
+                  type="file"
+                  accept="application/pdf"
+                  onChange={handleFileUpload}
+                  className="hidden"
+                />
+              </label>
+
+              <button
+                type="button"
+                onClick={handleSample}
+                className="inline-flex items-center gap-1.5 px-5 py-3 rounded-2xl bg-indigo-50 dark:bg-indigo-950/60 hover:bg-indigo-100 dark:hover:bg-indigo-900/60 border border-indigo-200 dark:border-indigo-800 text-indigo-700 dark:text-indigo-300 text-sm font-semibold shadow-sm transition-all cursor-pointer"
+              >
+                <Sparkles className="w-4 h-4" />
+                <span>{language === 'hi' ? '✨ सैंपल डेमो PDF आज़माएं' : '✨ Try Demo PDF'}</span>
+              </button>
+            </div>
           </div>
         ) : (
           <div className="space-y-6">

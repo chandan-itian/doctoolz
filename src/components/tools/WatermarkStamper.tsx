@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ToolHeader } from '../common/ToolHeader';
-import { ShieldAlert, Upload, Download, RefreshCw, Eye } from 'lucide-react';
+import { ShieldAlert, Upload, Download, RefreshCw, Eye, Sparkles } from 'lucide-react';
 import { applyWatermarkToImage, WatermarkOptions } from '../../utils/watermarkEngine';
+import { generateSampleIdCard } from '../../utils/sampleImages';
 import confetti from 'canvas-confetti';
 
 export const WatermarkStamper: React.FC = () => {
@@ -37,6 +38,19 @@ export const WatermarkStamper: React.FC = () => {
       };
       img.src = url;
     }
+  };
+
+  const handleSample = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const sample = await generateSampleIdCard();
+    setFile(sample);
+    const url = URL.createObjectURL(sample);
+    setPreviewUrl(url);
+    const img = new Image();
+    img.onload = () => {
+      setImageElement(img);
+    };
+    img.src = url;
   };
 
   useEffect(() => {
@@ -88,7 +102,16 @@ export const WatermarkStamper: React.FC = () => {
             <p className="font-semibold text-slate-800 dark:text-slate-100 text-base mb-1">
               {language === 'hi' ? 'दस्तावेज़ या आधार / पैन कार्ड अपलोड करें' : 'Upload Aadhaar, PAN, or Marksheet'}
             </p>
-            <p className="text-xs text-slate-400">100% Client-side: Your ID Never leaves your device</p>
+            <p className="text-xs text-slate-400 mb-3">100% Client-side: Your ID Never leaves your device</p>
+
+            <button
+              type="button"
+              onClick={handleSample}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-red-50 dark:bg-red-950/60 hover:bg-red-100 dark:hover:bg-red-900/60 border border-red-200 dark:border-red-800 text-red-700 dark:text-red-300 text-xs font-semibold shadow-sm transition-all cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{language === 'hi' ? '✨ सैंपल डेमो पहचान पत्र (ID Card) आज़माएं' : '✨ Try Demo ID Card'}</span>
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">

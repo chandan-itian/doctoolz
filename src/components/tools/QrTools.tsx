@@ -1,7 +1,7 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ToolHeader } from '../common/ToolHeader';
-import { QrCode, Scan, Download, Copy, Check, ExternalLink, Camera, Upload, RefreshCw } from 'lucide-react';
+import { QrCode, Scan, Download, Copy, Check, ExternalLink, Camera, Upload, RefreshCw, Sparkles } from 'lucide-react';
 import {
   generateQrDataUrl,
   scanQrFromImage,
@@ -11,6 +11,7 @@ import {
   UpiPaymentDetails,
   WifiDetails,
 } from '../../utils/qrEngine';
+import { generateSampleQrImage } from '../../utils/sampleImages';
 import confetti from 'canvas-confetti';
 
 export const QrTools: React.FC = () => {
@@ -123,6 +124,15 @@ export const QrTools: React.FC = () => {
       } else {
         alert('No QR code found in this image. Please upload a clear QR photo.');
       }
+    }
+  };
+
+  const handleSampleScan = async () => {
+    const sample = await generateSampleQrImage();
+    const code = await scanQrFromImage(sample);
+    if (code) {
+      setScannedResult(code);
+      confetti({ particleCount: 30, spread: 50, origin: { y: 0.8 } });
     }
   };
 
@@ -361,6 +371,17 @@ export const QrTools: React.FC = () => {
                 </span>
                 <span className="text-xs text-slate-400">Scans instantly from image file</span>
               </label>
+            </div>
+
+            <div className="text-center">
+              <button
+                type="button"
+                onClick={handleSampleScan}
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-teal-50 dark:bg-teal-950/60 hover:bg-teal-100 dark:hover:bg-teal-900/60 border border-teal-200 dark:border-teal-800 text-teal-700 dark:text-teal-300 text-xs font-semibold shadow-sm transition-all cursor-pointer"
+              >
+                <Sparkles className="w-3.5 h-3.5" />
+                <span>{language === 'hi' ? '✨ सैंपल डेमो QR फोटो स्कैन करें' : '✨ Try Scanning Demo QR Image'}</span>
+              </button>
             </div>
 
             {/* Video preview for camera */}

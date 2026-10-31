@@ -1,8 +1,9 @@
 import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ToolHeader } from '../common/ToolHeader';
-import { Scissors, Upload, Download, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { Scissors, Upload, Download, RefreshCw, CheckCircle2, Sparkles } from 'lucide-react';
 import { splitPdfFile } from '../../utils/pdfAdvanced';
+import { generateSamplePdf } from '../../utils/sampleImages';
 import { PDFDocument } from 'pdf-lib';
 import confetti from 'canvas-confetti';
 
@@ -29,6 +30,22 @@ export const PdfSplitter: React.FC = () => {
       } catch (err) {
         console.error('Error reading PDF pages:', err);
       }
+    }
+  };
+
+  const handleSample = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    setIsProcessing(true);
+    try {
+      const sample = await generateSamplePdf(3);
+      setFile(sample);
+      setTotalPages(3);
+      setPageRangeInput('1-2');
+      setResult(null);
+    } catch (err) {
+      console.error('Error generating sample PDF:', err);
+    } finally {
+      setIsProcessing(false);
     }
   };
 
@@ -122,9 +139,18 @@ export const PdfSplitter: React.FC = () => {
             <p className="font-semibold text-slate-800 dark:text-slate-100 text-base mb-1">
               {language === 'hi' ? 'PDF फाइल चुनें जिसे स्प्लिट करना है' : 'Upload PDF to Split / Extract Pages'}
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 mb-3">
               {language === 'hi' ? 'बड़ी PDF में से मनचाहे पेज निकालें' : 'Extract specific pages into a new compact file'}
             </p>
+
+            <button
+              type="button"
+              onClick={handleSample}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-pink-50 dark:bg-pink-950/60 hover:bg-pink-100 dark:hover:bg-pink-900/60 border border-pink-200 dark:border-pink-800 text-pink-700 dark:text-pink-300 text-xs font-semibold shadow-sm transition-all cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{language === 'hi' ? '✨ सैंपल डेमो PDF आज़माएं (3 पेज)' : '✨ Try Demo 3-Page PDF'}</span>
+            </button>
           </div>
         ) : (
           <div className="space-y-6">

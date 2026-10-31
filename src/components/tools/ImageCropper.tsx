@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ToolHeader } from '../common/ToolHeader';
-import { Crop, Upload, Download, RotateCw, FlipHorizontal, FlipVertical, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { Crop, Upload, Download, RotateCw, FlipHorizontal, FlipVertical, RefreshCw, CheckCircle2, Sparkles } from 'lucide-react';
 import { cropAndExportImage, CropArea, AspectRatioOption } from '../../utils/cropEngine';
+import { generateSamplePortrait } from '../../utils/sampleImages';
 import confetti from 'canvas-confetti';
 
 export const ImageCropper: React.FC = () => {
@@ -43,6 +44,22 @@ export const ImageCropper: React.FC = () => {
       };
       img.src = url;
     }
+  };
+
+  const handleSample = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const sample = await generateSamplePortrait();
+    setFile(sample);
+    const url = URL.createObjectURL(sample);
+    const img = new Image();
+    img.onload = () => {
+      setImageElement(img);
+      const minSide = Math.min(img.width, img.height);
+      const w = (minSide * 0.8) / img.width;
+      const h = (minSide * 0.8) / img.height;
+      setCropNorm({ x: (1 - w) / 2, y: (1 - h) / 2, w, h });
+    };
+    img.src = url;
   };
 
   // Re-export cropped image whenever cropNorm, aspect, rotation, or flip changes
@@ -140,7 +157,16 @@ export const ImageCropper: React.FC = () => {
             <p className="font-semibold text-slate-800 dark:text-slate-100 text-base mb-1">
               {language === 'hi' ? 'फोटो अपलोड करें जिसे क्रॉप करना है' : 'Upload Image to Crop'}
             </p>
-            <p className="text-xs text-slate-400">JPG, PNG, WebP • Free, 1:1, 3:4, or Circle Cut</p>
+            <p className="text-xs text-slate-400 mb-3">JPG, PNG, WebP • Free, 1:1, 3:4, or Circle Cut</p>
+
+            <button
+              type="button"
+              onClick={handleSample}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-purple-50 dark:bg-purple-950/60 hover:bg-purple-100 dark:hover:bg-purple-900/60 border border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-300 text-xs font-semibold shadow-sm transition-all cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{language === 'hi' ? '✨ सैंपल डेमो फोटो आज़माएं' : '✨ Try Demo Portrait Photo'}</span>
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 items-start">

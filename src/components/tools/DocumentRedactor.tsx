@@ -1,8 +1,9 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ToolHeader } from '../common/ToolHeader';
-import { EyeOff, Upload, Download, RotateCcw, Trash2, Check, Shield } from 'lucide-react';
+import { EyeOff, Upload, Download, RotateCcw, Trash2, Check, Shield, Sparkles } from 'lucide-react';
 import { applyRedactionsToCanvas, RedactionRect } from '../../utils/redactorEngine';
+import { generateSampleIdCard } from '../../utils/sampleImages';
 import confetti from 'canvas-confetti';
 
 export const DocumentRedactor: React.FC = () => {
@@ -31,6 +32,19 @@ export const DocumentRedactor: React.FC = () => {
       };
       img.src = url;
     }
+  };
+
+  const handleSample = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const sample = await generateSampleIdCard();
+    setFile(sample);
+    const url = URL.createObjectURL(sample);
+    const img = new Image();
+    img.onload = () => {
+      setImageElement(img);
+      setRedactions([]);
+    };
+    img.src = url;
   };
 
   // Re-render canvas whenever image or redactions change
@@ -143,9 +157,18 @@ export const DocumentRedactor: React.FC = () => {
             <p className="font-semibold text-slate-800 dark:text-slate-100 text-base mb-1">
               {language === 'hi' ? 'दस्तावेज़ की इमेज अपलोड करें' : 'Upload Document to Redact'}
             </p>
-            <p className="text-xs text-slate-400">
+            <p className="text-xs text-slate-400 mb-3">
               {language === 'hi' ? 'आधार नंबर, फ़ोन नंबर या हस्ताक्षर छिपाएं' : 'Hide Aadhaar number, phone, address, or QR code'}
             </p>
+
+            <button
+              type="button"
+              onClick={handleSample}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-slate-200 dark:bg-slate-700 hover:bg-slate-300 dark:hover:bg-slate-600 text-slate-800 dark:text-slate-100 text-xs font-semibold shadow-sm transition-all cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5 text-amber-500" />
+              <span>{language === 'hi' ? '✨ सैंपल डेमो पहचान पत्र (ID Card) आज़माएं' : '✨ Try Demo ID / Aadhaar Card'}</span>
+            </button>
           </div>
         ) : (
           <div className="space-y-4">

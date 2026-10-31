@@ -1,12 +1,13 @@
 import React, { useState, useRef } from 'react';
 import { useApp } from '../../context/AppContext';
 import { ToolHeader } from '../common/ToolHeader';
-import { ArrowUpRight, Upload, Download, RefreshCw, CheckCircle2 } from 'lucide-react';
+import { ArrowUpRight, Upload, Download, RefreshCw, CheckCircle2, Sparkles } from 'lucide-react';
 import { increaseFileSize } from '../../utils/fileSizeIncreaser';
+import { generateSmallSamplePhoto } from '../../utils/sampleImages';
 import confetti from 'canvas-confetti';
 
 export const SizeIncreaser: React.FC = () => {
-  const { t } = useApp();
+  const { t, language } = useApp();
   const [file, setFile] = useState<File | null>(null);
   const [previewUrl, setPreviewUrl] = useState<string | null>(null);
   const [targetKb, setTargetKb] = useState<number>(50);
@@ -21,6 +22,14 @@ export const SizeIncreaser: React.FC = () => {
       setPreviewUrl(URL.createObjectURL(selected));
       setResult(null);
     }
+  };
+
+  const handleSample = async (e: React.MouseEvent) => {
+    e.stopPropagation();
+    const sample = await generateSmallSamplePhoto();
+    setFile(sample);
+    setPreviewUrl(URL.createObjectURL(sample));
+    setResult(null);
   };
 
   const handleDrop = (e: React.DragEvent) => {
@@ -102,7 +111,16 @@ export const SizeIncreaser: React.FC = () => {
             <p className="font-semibold text-slate-800 dark:text-slate-100 text-base mb-1">
               {t.dropzoneText} <span className="text-blue-600">{t.browseFiles}</span>
             </p>
-            <p className="text-xs text-slate-400">JPG, JPEG, PNG (Photo & Signature)</p>
+            <p className="text-xs text-slate-400 mb-3">JPG, JPEG, PNG (Photo & Signature)</p>
+
+            <button
+              type="button"
+              onClick={handleSample}
+              className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-sky-50 dark:bg-sky-950/60 hover:bg-sky-100 dark:hover:bg-sky-900/60 border border-sky-200 dark:border-sky-800 text-sky-700 dark:text-sky-300 text-xs font-semibold shadow-sm transition-all cursor-pointer"
+            >
+              <Sparkles className="w-3.5 h-3.5" />
+              <span>{language === 'hi' ? '✨ सैंपल डेमो फोटो आज़माएं (~12 KB)' : '✨ Try Demo Photo (~12 KB)'}</span>
+            </button>
           </div>
         ) : (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6 items-start">
