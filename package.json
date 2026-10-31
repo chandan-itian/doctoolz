@@ -1,12 +1,13 @@
 {
   "name": "doctoolz",
   "version": "1.0.0",
-  "description": "DocToolz - All-in-One Client-Side Image & Document Productivity Tools Platform",
+  "description": "DocToolz - All-in-One Client-Side Image, Passport Photo & PDF Productivity Suite",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "deploy": "npm run build && touch dist/.nojekyll && cd dist && git init && git config user.name 'DocToolz Developer' && git config user.email 'developer@doctoolz.local' && git checkout -b gh-pages && git add -A && git commit -m 'deploy: update gh-pages' && git push -f https://github.com/chandan-itian/doctoolz.git gh-pages && rm -rf .git"
   },
   "dependencies": {
     "@types/canvas-confetti": "^1.9.0",
