@@ -7,7 +7,7 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
-    "deploy": "npm run build && touch dist/.nojekyll && cd dist && git init && git config user.name 'DocToolz Developer' && git config user.email 'developer@doctoolz.local' && git checkout -b gh-pages && git add -A && git commit -m 'deploy: update gh-pages' && git remote add origin https://github.com/chandan-itian/doctoolz.git && git push -f origin gh-pages && rm -rf .git"
+    "deploy": "npm run build && touch dist/.nojekyll && cd dist && git init && git config user.name 'DocToolz Developer' && git config user.email 'developer@doctoolz.local' && git checkout -b gh-pages && git add -A && git commit -m 'deploy: update gh-pages' && git push -f $(git -C .. config --get remote.origin.url) gh-pages && rm -rf .git"
   },
   "dependencies": {
     "@pdfsmaller/pdf-decrypt": "^1.0.1",
