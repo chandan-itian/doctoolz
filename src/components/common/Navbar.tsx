@@ -7,7 +7,7 @@ export const Navbar: React.FC = () => {
   const { language, toggleLanguage, theme, toggleTheme, activeTool, setActiveTool, t } = useApp();
   const [isSwitcherOpen, setIsSwitcherOpen] = useState(false);
 
-  const activeToolName = activeTool && t.tools[activeTool] ? t.tools[activeTool].name : null;
+  const activeToolName = activeTool && (t.tools as any)[activeTool] ? (t.tools as any)[activeTool].name : null;
 
   return (
     <>

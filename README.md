@@ -1,40 +1,85 @@
 <div align="center">
 
-# ⚡ DocToolz
+# ⚡ DocToolz v1.0.2
 
 ### All-in-One Client-Side Image, Passport Photo & PDF Productivity Suite
-**20+ Superfast Tools • 100% Private (Zero Server Uploads) • Bilingual (हिंदी / English) • Offline-Ready**
+**20+ Superfast Tools • 100% Private (Zero Server Uploads) • Bilingual (हिंदी / English) • Offline-Ready Android App**
 
 [![Live Demo](https://img.shields.io/badge/🌐%20Live%20Demo-chandan--itian.github.io%2Fdoctoolz-00C781?style=for-the-badge&logo=google-chrome&logoColor=white)](https://chandan-itian.github.io/doctoolz/)
-[![Android APK](https://img.shields.io/badge/📱%20Download%20APK-v1.0.1%20(997%20KB)-blueviolet?style=for-the-badge&logo=android&logoColor=white)](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.1/DocToolz-v1.0.1.apk)
-[![GitHub Release](https://img.shields.io/badge/GitHub-Release-orange?style=for-the-badge&logo=github&logoColor=white)](https://github.com/chandan-itian/doctoolz/releases/tag/v1.0.1)
-[![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/chandan-itian/doctoolz)
+[![Android APK](https://img.shields.io/badge/📱%20Download%20APK-v1.0.2%20(1%2C017%20KB)-blueviolet?style=for-the-badge&logo=android&logoColor=white)](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.2/DocToolz-v1.0.2.apk)
+[![GitHub Release](https://img.shields.io/badge/GitHub-v1.0.2%20Release-orange?style=for-the-badge&logo=github&logoColor=white)](https://github.com/chandan-itian/doctoolz/releases/tag/v1.0.2)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/chandan-itian/doctoolz)
 [![Privacy Guarantee](https://img.shields.io/badge/Privacy-100%25%20Client--Side-success?style=for-the-badge&logo=shield&logoColor=white)](#-100-client-side-privacy-guarantee)
 
 ---
 
-### [👉 🚀 Open DocToolz Live in Browser](https://chandan-itian.github.io/doctoolz/) 👈 &nbsp;|&nbsp; [📲 Download Android APK v1.0.1 (997 KB)](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.1/DocToolz-v1.0.1.apk)
+### [👉 🚀 Open DocToolz Live in Browser](https://chandan-itian.github.io/doctoolz/) 👈 &nbsp;|&nbsp; [📲 Download Android APK v1.0.2 (1,017 KB)](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.2/DocToolz-v1.0.2.apk)
 
-*Designed for Indian government exams (SSC, UPSC, IBPS, State PSCs), university admissions, visa applications, and everyday digital document security.*
+*Built for Indian government competitive exams (UPSC, SSC, IBPS, State PSCs, NTA/JEE), university admissions, passport/visa portals, and everyday digital document security.*
 
+</div>
+
+---
+
+## 📸 DocToolz v1.0.2 Visual Showcase
+
+### Light Mode vs. Dark Mode UI
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center" width="50%">
+        <b>☀️ Light Mode (Adaptive Pastel UI)</b><br><br>
+        <img src="docs/screenshots/doctoolz_light_ui.png" alt="DocToolz Light Mode UI" width="360" />
+      </td>
+      <td align="center" width="50%">
+        <b>🌙 Dark Mode (Modern Deep Slate UI)</b><br><br>
+        <img src="docs/screenshots/doctoolz_dark_ui.png" alt="DocToolz Dark Mode UI" width="360" />
+      </td>
+    </tr>
+  </table>
+</div>
+
+---
+
+### Key Feature Highlights in v1.0.2
+
+<div align="center">
+  <table>
+    <tr>
+      <td align="center" width="33%">
+        <b>🖼️ Photo Compressor & Unit Converter</b><br>
+        <i>Multi-unit (Pixel, MM, CM, Inch) at 300 DPI with Live Output Preview</i><br><br>
+        <img src="docs/screenshots/doctoolz_photo_compressor.png" alt="Photo Compressor MM/CM/Inch" width="280" />
+      </td>
+      <td align="center" width="33%">
+        <b>📥 Local Downloads Manager</b><br>
+        <i>Offline storage, instant file preview modal, native sharing & PDF viewing</i><br><br>
+        <img src="docs/screenshots/doctoolz_downloads_manager.png" alt="Local Downloads Manager" width="280" />
+      </td>
+      <td align="center" width="33%">
+        <b>⚙️ AMOLED Pitch Black & Cache Cleaner</b><br>
+        <i>True zero-lumen OLED background & 1-tap sandbox cache clearing</i><br><br>
+        <img src="docs/screenshots/doctoolz_settings_amoled.png" alt="AMOLED Mode and Cache Cleaner" width="280" />
+      </td>
+    </tr>
+  </table>
 </div>
 
 ---
 
 ## 📑 Table of Contents
 
-- [🌟 Why DocToolz?](#-why-doctoolz)
+- [🌟 What's New in v1.0.2](#-whats-new-in-v102)
 - [🛡️ 100% Client-Side Privacy Guarantee](#️-100-client-side-privacy-guarantee)
-- [🧭 Modern UI & Quick Tool Navigation](#-modern-ui--quick-tool-navigation)
+- [🧭 Modern UI & Sleek Bottom Navigation](#-modern-ui--sleek-bottom-navigation)
 - [🛠️ The 20 Core Tools by Category](#️-the-20-core-tools-by-category)
   - [Category 1: Exam & Student Form Essentials](#-category-1-exam--student-form-essentials)
   - [Category 2: Advanced PDF Suite](#-category-2-advanced-pdf-suite)
   - [Category 3: Document Safety & Privacy](#-category-3-document-safety--privacy)
   - [Category 4: Image, Photo & Productivity Utilities](#-category-4-image-photo--productivity-utilities)
-- [🎨 UI & Experience (Bilingual & Dark Mode)](#-ui--experience-bilingual--dark-mode)
-- [📱 Android Application (APK)](#-android-application-apk)
+- [📱 Native Android APK v1.0.2](#-native-android-apk-v102)
 - [💻 Tech Stack & Architecture](#-tech-stack--architecture)
 - [🚀 Local Development Setup](#-local-development-setup)
 - [🧪 Comprehensive QA & Verification Test Suite](#-comprehensive-qa--verification-test-suite)
@@ -44,20 +89,37 @@
 
 ---
 
-## 🌟 Why DocToolz?
+## 🌟 What's New in v1.0.2
 
-When applying for government recruitment portals, university admissions, and visa applications (e.g., SSC, UPSC, NTA, IBPS, US Visa, OCI), candidates encounter stringent requirements:
-- *"Photo must be strictly between 20 KB and 50 KB in JPEG format."*
-- *"Photo must meet minimum file size limit (rejected if under 20 KB)."*
-- *"Dimensions must be exactly 3.5 cm × 4.5 cm with 200 / 300 DPI resolution."*
-- *"Calculate exact age as on 01-08-2025 with category relaxation."*
-- *"Combined photo and signature in a single file under 100 KB."*
-- *"Convert CBSE CGPA (×9.5) to percentage and marks division."*
-- *"Protect documents with security watermarks to prevent identity theft."*
+1. **Card Renames & Visual Streamlining**:
+   - `ExactKbResizer` ➔ **`Photo Compressor`**
+   - `Admit Card Prep` ➔ **`Photo and Signature Merger`**
+   - `Format Convert` ➔ **`PhotoToPdf`**
+   - `Reorder Pages` ➔ **`Page Reorder Pdf`**
 
-Most online converter tools upload your confidential documents (Aadhaar cards, signatures, marksheet PDFs) to external remote servers, risking data leaks.
+2. **Photo Compression Engine Overhaul**:
+   - **Multi-Unit Dimension Converter**: Set dimensions in **`Pixel (px)`**, **`MM (mm)`**, **`CM (cm)`**, or **`Inch (in)`** with automatic real-time conversion at the 300 DPI high-clarity print standard.
+   - **Upload Image & Demo**: Section title updated to `Upload Image` with a one-click `Try Demo img` feature.
+   - **Live Output Photo Preview**: View real-time output image, exact calculated KB, format badge (`JPG`, `PNG`, `WEBP`), pixel dimensions, and 300 DPI verification badge.
+   - **Native Sharing**: One-click sharing via Android's native share intent (`AndroidBridge.shareFile`) and Web Share API.
 
-**DocToolz solves this problem completely.** Built with HTML5 Canvas, WebAssembly, and Pure JavaScript, every compression, background removal, DPI injection, PDF merge/split, and password encryption happens **100% locally in your browser memory**.
+3. **Document Scanner with Dual Capture & 6 Filters**:
+   - **Dual Triggers**: Open camera directly (`capture="environment"`) or browse local files.
+   - **6 Document Filters**: `Magic Clean`, `Black & White`, `Grayscale`, `Vibrant Color`, `Warm Tone`, and `High Contrast`.
+   - **Multi-Page Management**: Rotate pages 90°, delete unwanted pages, and compile into a multi-page PDF in one tap.
+
+4. **Sleek 4-Tab Bottom Navigation & Downloads Manager**:
+   - Compact modern 48px height (`h-12`) bar with 4 tabs: **`Home`**, **`Tool`**, **`Downloads`**, and **`Settings`**.
+   - **Local Downloads Manager**: View all downloaded images and PDFs completely offline. Filter by `All Files`, `Images`, or `PDFs`. Open in full-screen preview modal, share directly, re-download, or delete.
+
+5. **True AMOLED Zero-Lumen Pitch Black**:
+   - Toggle **`AMOLED Pitch Black`** in Settings for pure `#000000` background and `#0a0a0a` cards for zero battery drain on OLED screens. Toggle off to return to standard slate theme.
+
+6. **Storage & Sandbox Cache Cleaner**:
+   - One-tap **`Clear`** button purges temporary buffers, `sessionStorage`, browser cache, and native WebView cache via `AndroidBridge.clearAppCache()`, immediately resetting the storage gauge to `0.0 MB`.
+
+7. **Native Hardware Back Button Support**:
+   - Pressing the physical Android back button smoothly dismisses modals, navigates from tools back to Home, and switches tabs without abruptly closing the app.
 
 ---
 
@@ -73,18 +135,20 @@ Most online converter tools upload your confidential documents (Aadhaar cards, s
 
 ---
 
-## 🧭 Modern UI & Quick Tool Navigation
+## 🧭 Modern UI & Sleek Bottom Navigation
 
-1. **Senior-Grade Category Filter Tabs**:
+1. **Category Filter Tabs**:
    - 🌟 **All Tools** (20 Tools)
-   - 🖼️ **Image & Photo** (8 Tools)
-   - 📄 **PDF Tools** (6 Tools)
+   - 🖼️ **Photo & KB** (10 Tools)
+   - 📄 **PDF Tools** (8 Tools)
    - 🎓 **Exam & Students** (8 Tools)
    - 🛡️ **Privacy & Safety** (5 Tools)
 2. **Instant Search Bar**: Filter tools by keywords (e.g. *50KB, Passport, Age, Watermark, QR, Split*).
-3. **⚡ Quick Tool Switcher (`ToolSwitcherModal`)**: 
-   - Available on every page in the top navbar and tool header.
-   - Switch between any of the 20 tools in 1 click without going back to Home!
+3. **Sleek 4-Tab Bottom Dock**:
+   - 🏠 **Home**: Quick grid of all 20 tools with pastel cards and search.
+   - 🧰 **Tool**: Direct access to the currently active tool.
+   - 📥 **Downloads**: Built-in offline file manager for generated images and PDFs.
+   - ⚙️ **Settings**: Themes, AMOLED mode, language toggle (Hindi/English), and sandbox cache cleaner.
 
 ---
 
@@ -94,10 +158,12 @@ Most online converter tools upload your confidential documents (Aadhaar cards, s
 
 | Tool Name | Key Capabilities | Technical Engine |
 |---|---|---|
-| **1. Increase Photo Size to Exact KB** | Safely increase JPG/PNG file size to meet minimum portal limits (e.g. 20KB, 50KB, 100KB) without altering image resolution or visual quality. | JPEG COM marker & PNG tEXt padding |
-| **2. Exam Age & Cut-off Date Calculator** | Calculate exact age in years, months, days on official exam cut-off dates. Includes category age relaxation (OBC +3y, SC/ST +5y, PwD +10y) and eligibility checks for SSC, UPSC, IBPS, NDA, RRB. | Date difference & relaxation engine |
-| **3. CGPA to % & Marks Calculator** | Convert CBSE (×9.5), AICTE `((CGPA - 0.75) * 10)`, Mumbai Uni, or custom CGPA to percentage. Includes total marks to division (Distinction, 1st, 2nd, 3rd) and grade. | Math & Board Formula Registry |
-| **4. Digital Signature Pad & Maker** | Draw digital signature with touch or mouse. Fine, medium, bold thickness, black/blue/red pen ink. Export crisp signatures with 100% transparent PNG background or white card. | HTML5 Canvas Touch & Pen API |
+| **1. Photo Compressor** | Compress photo to exact target KB (e.g. 20KB, 50KB, 100KB) with custom resolution in Pixel, MM, CM, and Inch at 300 DPI with real-time output preview. | HTML5 Canvas + Adaptive Binary Search |
+| **2. Exam Age & Cut-off Date Calculator** | Calculate exact age in years, months, days on official exam cut-off dates. Includes category age relaxation (OBC +3y, SC/ST +5y, PwD +10y) for UPSC, SSC, IBPS, NDA, RRB. | Date difference & relaxation engine |
+| **3. CGPA to % & Marks Calculator** | Convert CBSE (×9.5), AICTE `((CGPA - 0.75) * 10)`, Mumbai Uni, or custom CGPA to percentage. Includes total marks to division and grade. | Math & Board Formula Registry |
+| **4. Digital Signature Pad & Studio** | Draw digital signature with touch or mouse. Fine, medium, bold thickness, black/blue/red pen ink. Export crisp signatures with 100% transparent PNG or white card. | HTML5 Canvas Touch & Pen API |
+| **5. Photo and Signature Merger** | Combine candidate photo and signature into a clean vertical composite card under custom target KB in JPG, PNG, or WebP format. | Canvas Multi-layer Composite |
+| **6. Marksheet Cutoff Calculator** | Calculate aggregate percentages, subject totals, and cutoff margin analysis for competitive entrance exams. | Client-side Math Engine |
 
 ---
 
@@ -105,12 +171,12 @@ Most online converter tools upload your confidential documents (Aadhaar cards, s
 
 | Tool Name | Key Capabilities | Technical Engine |
 |---|---|---|
-| **5. Compress PDF to Target KB** | Shrink marksheets, caste certificates, and documents under strict upload limits (<100KB, <200KB, <500KB) directly in your browser. | `pdfjs-dist` + Canvas + `pdf-lib` |
-| **6. Merge Multiple PDFs into One** | Combine multiple PDF files (admit cards, marksheets, certificates) into a single document with drag-and-drop page reordering. | `pdf-lib` stream merging |
-| **7. Split & Extract PDF Pages** | Select individual pages or custom ranges (e.g. 1-3, 5, odd/even pages) from large PDF files and export them into a new lightweight PDF. | `pdf-lib` page slicing |
-| **8. PDF Password Protect & Encrypt** | Secure sensitive documents and marksheets with military-grade 128-bit AES password encryption directly in browser. | `@pdfsmaller/pdf-encrypt` AES-256/128 |
-| **9. Photo to PDF Converter** | Convert single or multiple images (JPG, PNG, WebP) into a compact PDF with orientation and margin controls. | `pdf-lib` pure JS engine |
-| **10. PDF to Photo (JPG / PNG)** | Extract high-definition pages from PDF files at 150 DPI or 300 DPI print quality. Download individual pages or entire documents. | Mozilla `pdfjs-dist` Canvas Renderer |
+| **7. PDF Compress** | Shrink marksheets, caste certificates, and documents under strict upload limits (<100KB, <200KB, <500KB) directly in your browser. | `pdfjs-dist` + Canvas + `pdf-lib` |
+| **8. Merge & Split PDF** | Combine multiple PDF files into a single document or extract selected page ranges into a new lightweight PDF. | `pdf-lib` stream merging & slicing |
+| **9. Page Reorder Pdf** | Visual drag-and-drop PDF page reordering, 90° page rotation, and selective deletion before saving. | `pdfjs-dist` + `pdf-lib` |
+| **10. PDF Protect & Password** | Secure sensitive documents and marksheets with military-grade 128-bit AES password encryption directly in browser. | `@pdfsmaller/pdf-encrypt` AES-256/128 |
+| **11. PhotoToPdf Convert** | Convert single or multiple images (JPG, PNG, WebP) into a compact PDF with orientation and margin controls. | `pdf-lib` pure JS engine |
+| **12. Document Scanner** | Capture documents via direct camera shutter or gallery files. Apply Magic Clean, B&W, Grayscale, Vibrant, Warm, or High Contrast filters and save to PDF. | HTML5 MediaDevices / Camera API + Canvas Filters |
 
 ---
 
@@ -118,9 +184,10 @@ Most online converter tools upload your confidential documents (Aadhaar cards, s
 
 | Tool Name | Key Capabilities | Technical Engine |
 |---|---|---|
-| **11. Document Misuse Prevention Watermark** | Stamp custom diagonal security watermarks (e.g. *"Only for SSC CGL 2026"*, *"Self Attested Copy - Do Not Misuse"*) with adjustable opacity across Aadhaar or PAN. | Canvas 2D Text Stamping with Opacity |
-| **12. Sensitive Data Redactor & Masker** | Blackout box, pixelate mosaic, or blur private information (Aadhaar numbers, phone, signatures, QR codes) before sharing documents online. | Canvas Pixel Manipulation & Box Blur |
-| **13. OCR Image to Text (Hindi & English)** | Extract printed text from images and documents in Hindi, English, or bilingual text without sending any data to external servers. | `tesseract.js` WebAssembly Worker |
+| **13. Custom Watermark Stamper** | Stamp custom diagonal security watermarks (e.g. *"Only for UPSC 2026"*, *"Self Attested Copy"*) with adjustable opacity across Aadhaar or PAN. | Canvas 2D Text Stamping with Opacity |
+| **14. Document Redactor & Masker** | Blackout box, pixelate mosaic, or blur private information (Aadhaar numbers, phone, signatures, QR codes) before sharing documents online. | Canvas Pixel Manipulation & Box Blur |
+| **15. Metadata Stripper** | Strip EXIF metadata, GPS geotags, camera serial numbers, and author tags from photos before uploading to public portals. | Pure JS Binary EXIF Header Parser |
+| **16. PDF to Word & OCR** | Extract printed text from images and scanned document pages in Hindi and English without sending data to external servers. | `tesseract.js` WebAssembly Worker |
 
 ---
 
@@ -128,47 +195,38 @@ Most online converter tools upload your confidential documents (Aadhaar cards, s
 
 | Tool Name | Key Capabilities | Technical Engine |
 |---|---|---|
-| **14. Compress Image to Exact KB** | Reduce photo size to exactly 20KB, 50KB, 100KB, or custom KB. Multi-unit dimension controls (`px`, `cm`, `mm`, `in`), aspect ratio lock, and JPG/PNG/WebP format options. | HTML5 Canvas + Adaptive Binary Search |
-| **15. Passport Photo & Print Sheet Maker** | Official 3.5×4.5 cm (India/UK) and 2×2 inch (US Visa) formats. Dynamic background color replacement, custom KB targets, and 1-click **4×6 / A4 Print Sheet Generator** (4, 6, 8, 12 photos). | Canvas Coordinate Transformation + 300 DPI Export |
-| **16. Signature Resizer & Cleaner** | Resize signatures to any custom KB (10KB, 12KB, 15KB, 16KB, etc.). Auto-remove paper shadows, phone camera tints, and enhance black ink lines. | Canvas Luminance Binarization Filter |
-| **17. Custom Size, DPI & Bit Depth** | Resize in Pixels, CM, MM, Inches. Embeds official **200 / 300 DPI JFIF headers** and converts to 24-bit RGB, 8-bit Grayscale, or 1-bit B/W. | Binary JFIF APP0 Segment Injection |
-| **18. Photo & Signature Merger** | Combine candidate photo and signature into a clean vertical composite card under custom target KB and JPG, PNG, or WebP format. | Canvas Multi-layer Composite |
-| **19. QR Code Generator & Camera Scanner** | Generate custom QR codes for UPI payments, Wi-Fi, URLs, and text. Scan QR codes from image files or directly from your device camera. | `qrcode` + `jsQR` (Pure JS) |
-| **20. Image Cropper & Circle Cut** | Crop photos with standard aspect ratios (1:1, 3:4, 16:9) or circular avatar cuts with transparent corners for official portal profile photos. | Canvas Clipping & Geometric Transform |
+| **17. QR & Barcode Studio** | Generate custom QR codes for UPI payments, Wi-Fi, URLs, and vCards. Scan QR codes from image files or device camera. | `qrcode` + `jsQR` (Pure JS) |
+| **18. Background Remover** | Passport portrait background replacement (white, blue, custom) for official exams and visa applications. | Canvas Color Segmentation & Flood Fill |
+| **19. ID Card Maker** | Generate candidate admit cards and identity cards with candidate photo, signature, and barcode. | Canvas Template Layout Engine |
+| **20. Batch Process** | Bulk multi-file image resizer and compressor to process dozens of images simultaneously. | Asynchronous Batch Worker |
 
 ---
 
-## 🎨 UI & Experience (Bilingual & Dark Mode)
+## 📱 Native Android APK v1.0.2
 
-- **🌐 Instant Bilingual Toggle**: Complete interface available in both **English** and **हिंदी (Hindi)**. All tool descriptions, buttons, tooltips, and badges toggle seamlessly without page reload.
-- **🌙 Dark & Light Mode**: Built with Tailwind CSS v4 class-based theming. Detects system theme preference automatically and saves the user's manual choice in `localStorage`.
-- **📱 Fully Responsive**: Fluid, mobile-first design adapted for mobile phones, tablets, and large desktop screens.
-- **⚡ Zero Clutter**: Clean, accessible layout inspired by modern design principles.
+DocToolz is available as a native, lightweight, and hardware-accelerated Android APK:
 
----
+- **📦 Ultra-Compact Size**: **1,017 KB** (~1.0 MB)
+- **⚡ 100% Offline**: Operates completely on-device without internet access.
+- **📥 Built-in Downloads Manager**: Access compressed photos and scanned PDFs directly within the app.
+- **💾 Direct Android Downloads**: Saves files into `Downloads/DocToolz` on your device.
+- **🔗 Native Sharing**: Shares generated documents directly to WhatsApp, Drive, Gmail, or Telegram.
+- **🖤 AMOLED Pitch Black**: True `#000000` background for maximum battery efficiency.
+- **📱 Android Compatibility**: Supports Android 7.0 (API 24) through Android 15 (API 35).
 
-## 📱 Android Application (APK)
-
-DocToolz is available as a native, lightweight, and hardware-accelerated Android APK for mobile users:
-
-- **📦 Ultra-Compact Size**: Under **1 MB** (Only ~901 KB download size)
-- **⚡ 100% Offline Capability**: Runs entirely on-device without internet access
-- **💾 Direct Local Storage**: Processed photos, merged PDFs, and compressed images save directly to your Android device's `Downloads/DocToolz` folder
-- **🎯 Full Hardware Acceleration**: Responsive touch controls, camera integration, and fast canvas rendering
-- **📱 Broad Android Compatibility**: Supports Android 7.0 (Nougat, API 24) through Android 15 (API 35)
-
-[📥 Download DocToolz v1.0.1 APK](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.1/DocToolz-v1.0.1.apk) • [🏷️ View All Releases](https://github.com/chandan-itian/doctoolz/releases)
+[📥 Download DocToolz v1.0.2 APK (1,017 KB)](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.2/DocToolz-v1.0.2.apk) • [🏷️ View v1.0.2 Release Notes](https://github.com/chandan-itian/doctoolz/releases/tag/v1.0.2)
 
 ---
 
 ## 💻 Tech Stack & Architecture
 
 - **Core Framework**: React 19 + TypeScript
-- **Bundler & Dev Server**: Vite 6
-- **Styling**: Tailwind CSS v4 with `@custom-variant dark`
+- **Bundler & Tooling**: Vite 8 + Rolldown
+- **Styling**: Tailwind CSS v4 with custom AMOLED & Dark mode variants
 - **Iconography**: Lucide React
-- **PDF Processing**: `pdf-lib`, `pdfjs-dist`, `@pdfsmaller/pdf-encrypt`, `@pdfsmaller/pdf-decrypt`
+- **PDF Engine**: `pdf-lib`, `pdfjs-dist`, `@pdfsmaller/pdf-encrypt`, `@pdfsmaller/pdf-decrypt`
 - **Computer Vision & OCR**: `tesseract.js`, `jsqr`, `qrcode`
+- **Native Android Wrapper**: Lightweight WebView wrapper with `@JavascriptInterface` bridge for file saving, sharing, and cache clearing.
 
 ---
 
@@ -185,8 +243,8 @@ npm install
 # 3. Start development server
 npm run dev
 
-# 4. Run automated test suite
-node scripts/test-all-tools.mjs
+# 4. Build production static bundle
+npm run build
 ```
 
 Open `http://localhost:5173/doctoolz/` in your browser.
@@ -195,7 +253,7 @@ Open `http://localhost:5173/doctoolz/` in your browser.
 
 ## 🧪 Comprehensive QA & Verification Test Suite
 
-DocToolz includes an automated Node.js test suite to verify every engine:
+DocToolz includes automated tests to verify client-side processing:
 
 ```bash
 node scripts/test-all-tools.mjs
@@ -222,7 +280,7 @@ The project is deployed to GitHub Pages via the `gh-pages` branch with `.nojekyl
 npm run deploy
 ```
 
-- **Production URL**: [https://chandan-itian.github.io/doctoolz/](https://chandan-itian.github.io/doctoolz/)
+- **Live URL**: [https://chandan-itian.github.io/doctoolz/](https://chandan-itian.github.io/doctoolz/)
 
 ---
 

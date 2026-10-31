@@ -36,3 +36,36 @@
 ::-webkit-scrollbar-thumb:hover {
   background: rgba(148, 163, 184, 0.6);
 }
+
+/* True AMOLED Zero-Lumen Pitch Black Mode */
+html.amoled,
+html.amoled body,
+html.amoled #root,
+html.amoled .bg-slate-950,
+html.amoled .bg-slate-900,
+html.amoled .dark\:bg-slate-950 {
+  background-color: #000000 !important;
+}
+
+html.amoled .dark\:bg-slate-900,
+html.amoled .dark\:bg-slate-800,
+html.amoled .dark\:bg-slate-850 {
+  background-color: #0a0a0a !important;
+  border-color: #1c1c1c !important;
+}
+
+html.amoled nav,
+html.amoled header {
+  background-color: rgba(0, 0, 0, 0.96) !important;
+  border-color: #1c1c1c !important;
+}
+
+html.amoled .dark\:border-slate-800,
+html.amoled .dark\:border-slate-700 {
+  border-color: #1f1f1f !important;
+}
+
+html.amoled [class*="dark:bg-[#"] {
+  background-color: #080808 !important;
+  border: 1px solid #1f1f1f !important;
+}

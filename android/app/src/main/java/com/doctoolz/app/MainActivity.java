@@ -55,7 +55,10 @@ public class MainActivity extends Activity {
         Window window = getWindow();
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             window.addFlags(WindowManager.LayoutParams.FLAG_DRAWS_SYSTEM_BAR_BACKGROUNDS);
-            window.setStatusBarColor(Color.parseColor("#3730A3")); // Deep Indigo
+            window.setStatusBarColor(Color.parseColor("#FFFFFF"));
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            window.getDecorView().setSystemUiVisibility(View.SYSTEM_UI_FLAG_LIGHT_STATUS_BAR);
         }
 
         FrameLayout container = new FrameLayout(this);
@@ -67,7 +70,7 @@ public class MainActivity extends Activity {
         mWebView.setLayoutParams(new FrameLayout.LayoutParams(
                 ViewGroup.LayoutParams.MATCH_PARENT,
                 ViewGroup.LayoutParams.MATCH_PARENT));
-        mWebView.setBackgroundColor(Color.parseColor("#0F172A")); // Slate 900
+        mWebView.setBackgroundColor(Color.parseColor("#FFFFFF"));
 
         setupWebSettings(mWebView.getSettings());
         setupWebViewClients();
@@ -222,11 +225,21 @@ public class MainActivity extends Activity {
 
     @Override
     public void onBackPressed() {
-        if (mWebView != null && mWebView.canGoBack()) {
-            mWebView.goBack();
-        } else {
-            super.onBackPressed();
+        if (mWebView != null) {
+            mWebView.evaluateJavascript(
+                "(function() { return (typeof window.onAndroidBackPressed === 'function') ? window.onAndroidBackPressed() : false; })()",
+                new ValueCallback<String>() {
+                    @Override
+                    public void onReceiveValue(String value) {
+                        if (!"true".equalsIgnoreCase(value)) {
+                            MainActivity.super.onBackPressed();
+                        }
+                    }
+                }
+            );
+            return;
         }
+        super.onBackPressed();
     }
 
     private String getMimeType(String path) {
@@ -339,6 +352,98 @@ public class MainActivity extends Activity {
                 Log.e(TAG, "Failed saving file to downloads", e);
                 return false;
             }
+        }
+
+        @JavascriptInterface
+        public void clearAppCache() {
+            runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        if (mWebView != null) {
+                            mWebView.clearCache(true);
+                            mWebView.clearFormData();
+                            mWebView.clearHistory();
+                            mWebView.clearSslPreferences();
+                        }
+                        File cacheDir = getCacheDir();
+                        deleteDir(cacheDir);
+                        File codeCacheDir = getCodeCacheDir();
+                        deleteDir(codeCacheDir);
+                        Toast.makeText(MainActivity.this, "🧹 All App Cache Cleared Successfully", Toast.LENGTH_SHORT).show();
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error clearing cache: " + e.getMessage());
+                    }
+                }
+            });
+        }
+
+        private boolean deleteDir(File dir) {
+            if (dir != null && dir.isDirectory()) {
+                String[] children = dir.list();
+                if (children != null) {
+                    for (String child : children) {
+                        boolean success = deleteDir(new File(dir, child));
+                        if (!success) return false;
+                    }
+                }
+                return dir.delete();
+            } else if (dir != null && dir.isFile()) {
+                return dir.delete();
+            }
+            return false;
+        }
+
+        @JavascriptInterface
+        public void shareFile(final String dataUriOrBase64, final String filename) {
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        String payload = dataUriOrBase64;
+                        String detectedMime = "image/jpeg";
+
+                        if (payload.contains(",")) {
+                            int commaIndex = payload.indexOf(",");
+                            String header = payload.substring(0, commaIndex);
+                            payload = payload.substring(commaIndex + 1);
+                            if (header.contains(":") && header.contains(";")) {
+                                detectedMime = header.substring(header.indexOf(":") + 1, header.indexOf(";"));
+                            }
+                        }
+
+                        byte[] data = Base64.decode(payload, Base64.DEFAULT);
+                        String safeFilename = (filename == null || filename.trim().isEmpty())
+                                ? ("DocToolz_" + System.currentTimeMillis() + (detectedMime.contains("pdf") ? ".pdf" : ".jpg"))
+                                : filename.replaceAll("[^a-zA-Z0-9._-]", "_");
+
+                        File sharedDir = new File(getCacheDir(), "shared");
+                        if (!sharedDir.exists()) sharedDir.mkdirs();
+                        File tempFile = new File(sharedDir, safeFilename);
+                        try (FileOutputStream fos = new FileOutputStream(tempFile)) {
+                            fos.write(data);
+                            fos.flush();
+                        }
+
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
+                            try {
+                                android.os.StrictMode.VmPolicy.Builder builder = new android.os.StrictMode.VmPolicy.Builder();
+                                android.os.StrictMode.setVmPolicy(builder.build());
+                            } catch (Exception ignored) {}
+                        }
+
+                        Intent intent = new Intent(Intent.ACTION_SEND);
+                        intent.setType(detectedMime);
+                        intent.putExtra(Intent.EXTRA_SUBJECT, safeFilename);
+                        intent.putExtra(Intent.EXTRA_TEXT, "Shared from DocToolz");
+                        intent.putExtra(Intent.EXTRA_STREAM, Uri.fromFile(tempFile));
+                        intent.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+                        startActivity(Intent.createChooser(intent, "Share Document"));
+                    } catch (Exception e) {
+                        Log.e(TAG, "Error sharing file: " + e.getMessage(), e);
+                    }
+                }
+            }).start();
         }
     }
 }
