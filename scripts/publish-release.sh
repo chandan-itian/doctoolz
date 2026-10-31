@@ -8,8 +8,8 @@ if [ -z "$TOKEN" ]; then
 fi
 
 REPO="chandan-itian/doctoolz"
-TAG="v1.0.0"
-APK_PATH="/home/chandan/.gemini/antigravity/scratch/doctoolz/DocToolz-v1.0.0.apk"
+TAG="v1.0.1"
+APK_PATH="/home/chandan/.gemini/antigravity/scratch/doctoolz/DocToolz-v1.0.1.apk"
 
 echo "Checking GitHub Release $TAG for $REPO..."
 RELEASE_JSON=$(curl -s -X POST \
@@ -19,12 +19,13 @@ RELEASE_JSON=$(curl -s -X POST \
   -d '{
     "tag_name": "'"$TAG"'",
     "target_commitish": "main",
-    "name": "DocToolz v1.0.0 (Android APK & Offline Suite)",
-    "body": "## 🚀 DocToolz v1.0.0 Official Release\n\n### 📱 Android APK Highlights:\n- **Ultra-lightweight**: Only **901 KB** APK size\n- **100% Offline & Private**: Zero server uploads, works without internet\n- **All 20 Tools Included**: Passport Photo Maker, PDF Merger, Image Compressor, DPI Modifiers, OCR Extractor, QR Code Studio, etc.\n- **Direct Download**: Directly saves processed files to your device Downloads folder\n- **Hardware Accelerated**: Fast, smooth, responsive on all Android 7.0+ devices\n\n### 📥 Download:\nDownload `DocToolz-v1.0.0.apk` below and install on any Android phone.",
+    "name": "DocToolz v1.0.1 (Pro Mobile UI & Modern Adaptive Icon)",
+    "body": "## 🚀 DocToolz v1.0.1 Pro Mobile Update\n\n### 🎨 What'\''s New in v1.0.1:\n- **🌟 Premium 3D App Icon**: Completely redesigned high-definition adaptive app icon with supersampled geometry, rich Indigo-Cyan gradient, 3D document card depth, and Android 13+ Material You monochrome support.\n- **📱 Ergonomic Bottom Navigation Bar**: One-handed mobile tab bar for instant thumb-friendly access to All, Image, PDF, Exam tools, and quick tool switcher.\n- **✨ Native In-Tool Navigation**: Smooth back-to-tools navigation bar, enhanced curved tool cards, and tactile tap animations.\n- **⚡ Ultra-Compact Size**: Under **1 MB** (Only 997 KB) with 100% offline functionality.\n- **💾 Direct Android Downloads**: Saves outputs straight into your device'\''s `Downloads/DocToolz` folder.\n\n### 📥 Download:\nDownload `DocToolz-v1.0.1.apk` below and install on your Android device.",
     "draft": false,
     "prerelease": false
   }')
 
+echo "Release response: $RELEASE_JSON"
 RELEASE_ID=$(echo "$RELEASE_JSON" | grep -o '"id": [0-9]*' | head -n 1 | awk '{print $2}')
 
 if [ -z "$RELEASE_ID" ]; then
@@ -40,9 +41,9 @@ if [ -n "$RELEASE_ID" ]; then
     -H "Authorization: Bearer $TOKEN" \
     -H "Content-Type: application/vnd.android.package-archive" \
     --data-binary @"$APK_PATH" \
-    "https://uploads.github.com/repos/$REPO/releases/$RELEASE_ID/assets?name=DocToolz-v1.0.0.apk"
+    "https://uploads.github.com/repos/$REPO/releases/$RELEASE_ID/assets?name=DocToolz-v1.0.1.apk"
   echo ""
-  echo "APK successfully published to GitHub Release!"
+  echo "APK successfully published to GitHub Release v1.0.1!"
 else
   echo "Failed to get release ID"
   exit 1

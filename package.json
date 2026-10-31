@@ -1,6 +1,6 @@
 {
   "name": "doctoolz",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "DocToolz - All-in-One Client-Side Image, Passport Photo & PDF Productivity Suite",
   "type": "module",
   "scripts": {

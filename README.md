@@ -6,8 +6,8 @@
 **20+ Superfast Tools • 100% Private (Zero Server Uploads) • Bilingual (हिंदी / English) • Offline-Ready**
 
 [![Live Demo](https://img.shields.io/badge/🌐%20Live%20Demo-chandan--itian.github.io%2Fdoctoolz-00C781?style=for-the-badge&logo=google-chrome&logoColor=white)](https://chandan-itian.github.io/doctoolz/)
-[![Android APK](https://img.shields.io/badge/📱%20Download%20APK-v1.0.0%20(901%20KB)-blueviolet?style=for-the-badge&logo=android&logoColor=white)](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.0/DocToolz-v1.0.0.apk)
-[![GitHub Release](https://img.shields.io/badge/GitHub-Release-orange?style=for-the-badge&logo=github&logoColor=white)](https://github.com/chandan-itian/doctoolz/releases/tag/v1.0.0)
+[![Android APK](https://img.shields.io/badge/📱%20Download%20APK-v1.0.1%20(997%20KB)-blueviolet?style=for-the-badge&logo=android&logoColor=white)](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.1/DocToolz-v1.0.1.apk)
+[![GitHub Release](https://img.shields.io/badge/GitHub-Release-orange?style=for-the-badge&logo=github&logoColor=white)](https://github.com/chandan-itian/doctoolz/releases/tag/v1.0.1)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/chandan-itian/doctoolz)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/chandan-itian/doctoolz)
@@ -15,7 +15,7 @@
 
 ---
 
-### [👉 🚀 Open DocToolz Live in Browser](https://chandan-itian.github.io/doctoolz/) 👈 &nbsp;|&nbsp; [📲 Download Android APK (901 KB)](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.0/DocToolz-v1.0.0.apk)
+### [👉 🚀 Open DocToolz Live in Browser](https://chandan-itian.github.io/doctoolz/) 👈 &nbsp;|&nbsp; [📲 Download Android APK v1.0.1 (997 KB)](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.1/DocToolz-v1.0.1.apk)
 
 *Designed for Indian government exams (SSC, UPSC, IBPS, State PSCs), university admissions, visa applications, and everyday digital document security.*
 
@@ -157,7 +157,7 @@ DocToolz is available as a native, lightweight, and hardware-accelerated Android
 - **🎯 Full Hardware Acceleration**: Responsive touch controls, camera integration, and fast canvas rendering
 - **📱 Broad Android Compatibility**: Supports Android 7.0 (Nougat, API 24) through Android 15 (API 35)
 
-[📥 Download DocToolz v1.0.0 APK](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.0/DocToolz-v1.0.0.apk) • [🏷️ View All Releases](https://github.com/chandan-itian/doctoolz/releases)
+[📥 Download DocToolz v1.0.1 APK](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.1/DocToolz-v1.0.1.apk) • [🏷️ View All Releases](https://github.com/chandan-itian/doctoolz/releases)
 
 ---
 

@@ -392,19 +392,19 @@ export const HomeView: React.FC = () => {
       </div>
 
       {/* Tools Grid */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-4 sm:gap-5">
         {filteredTools.map((tool) => {
           const Icon = tool.icon;
           return (
             <div
               key={tool.id}
               onClick={() => setActiveTool(tool.id)}
-              className="group bg-white dark:bg-slate-900 rounded-2xl p-5 border border-slate-200/90 dark:border-slate-800/90 hover:border-blue-500/60 dark:hover:border-blue-500/60 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-200 flex flex-col justify-between cursor-pointer"
+              className="group bg-white dark:bg-slate-900 rounded-3xl p-5 sm:p-6 border border-slate-200/90 dark:border-slate-800/90 hover:border-indigo-500/50 dark:hover:border-indigo-500/50 shadow-2xs hover:shadow-xl active:scale-[0.98] transition-all duration-200 flex flex-col justify-between cursor-pointer"
             >
               <div>
                 <div className="flex items-center justify-between mb-4">
                   <div
-                    className={`w-12 h-12 rounded-xl bg-gradient-to-br ${tool.color} text-white flex items-center justify-center shadow-md shadow-blue-500/10 group-hover:scale-105 transition-transform`}
+                    className={`w-12 h-12 rounded-2xl bg-gradient-to-br ${tool.color} text-white flex items-center justify-center shadow-md shadow-indigo-500/15 group-hover:scale-105 active:scale-95 transition-transform`}
                   >
                     <Icon className="w-6 h-6" />
                   </div>
@@ -414,17 +414,22 @@ export const HomeView: React.FC = () => {
                     {tool.badge}
                   </span>
                 </div>
-                <h3 className="font-bold text-base text-slate-900 dark:text-white group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                <h3 className="font-bold text-base sm:text-lg text-slate-900 dark:text-white group-hover:text-indigo-600 dark:group-hover:text-indigo-400 transition-colors">
                   {tool.title}
                 </h3>
-                <p className="mt-2 text-xs text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-3">
+                <p className="mt-2 text-xs sm:text-sm text-slate-500 dark:text-slate-400 leading-relaxed line-clamp-3">
                   {tool.desc}
                 </p>
               </div>
 
-              <div className="mt-5 pt-3 border-t border-slate-100 dark:border-slate-800/70 flex items-center justify-between text-xs font-semibold text-blue-600 dark:text-blue-400">
-                <span>{language === 'hi' ? 'टूल खोलें' : 'Open Tool'}</span>
-                <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+              <div className="mt-5 pt-3.5 border-t border-slate-100 dark:border-slate-800/70 flex items-center justify-between text-xs font-bold text-indigo-600 dark:text-indigo-400">
+                <span className="flex items-center gap-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                  {language === 'hi' ? 'टूल खोलें' : 'Open Tool'}
+                </span>
+                <div className="w-7 h-7 rounded-full bg-indigo-50 dark:bg-indigo-950/80 flex items-center justify-center group-hover:bg-indigo-600 group-hover:text-white transition-colors">
+                  <ArrowRight className="w-3.5 h-3.5 group-hover:translate-x-0.5 transition-transform" />
+                </div>
               </div>
             </div>
           );
