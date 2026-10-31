@@ -6,6 +6,8 @@
 **20+ Superfast Tools • 100% Private (Zero Server Uploads) • Bilingual (हिंदी / English) • Offline-Ready**
 
 [![Live Demo](https://img.shields.io/badge/🌐%20Live%20Demo-chandan--itian.github.io%2Fdoctoolz-00C781?style=for-the-badge&logo=google-chrome&logoColor=white)](https://chandan-itian.github.io/doctoolz/)
+[![Android APK](https://img.shields.io/badge/📱%20Download%20APK-v1.0.0%20(901%20KB)-blueviolet?style=for-the-badge&logo=android&logoColor=white)](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.0/DocToolz-v1.0.0.apk)
+[![GitHub Release](https://img.shields.io/badge/GitHub-Release-orange?style=for-the-badge&logo=github&logoColor=white)](https://github.com/chandan-itian/doctoolz/releases/tag/v1.0.0)
 [![GitHub Repo](https://img.shields.io/badge/GitHub-Repository-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/chandan-itian/doctoolz)
 [![License](https://img.shields.io/badge/License-MIT-blue.svg?style=for-the-badge)](LICENSE)
 [![Build Status](https://img.shields.io/badge/Build-Passing-brightgreen?style=for-the-badge&logo=githubactions&logoColor=white)](https://github.com/chandan-itian/doctoolz)
@@ -13,7 +15,7 @@
 
 ---
 
-### [👉 🚀 Open DocToolz Live in Browser](https://chandan-itian.github.io/doctoolz/) 👈
+### [👉 🚀 Open DocToolz Live in Browser](https://chandan-itian.github.io/doctoolz/) 👈 &nbsp;|&nbsp; [📲 Download Android APK (901 KB)](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.0/DocToolz-v1.0.0.apk)
 
 *Designed for Indian government exams (SSC, UPSC, IBPS, State PSCs), university admissions, visa applications, and everyday digital document security.*
 
@@ -32,6 +34,7 @@
   - [Category 3: Document Safety & Privacy](#-category-3-document-safety--privacy)
   - [Category 4: Image, Photo & Productivity Utilities](#-category-4-image-photo--productivity-utilities)
 - [🎨 UI & Experience (Bilingual & Dark Mode)](#-ui--experience-bilingual--dark-mode)
+- [📱 Android Application (APK)](#-android-application-apk)
 - [💻 Tech Stack & Architecture](#-tech-stack--architecture)
 - [🚀 Local Development Setup](#-local-development-setup)
 - [🧪 Comprehensive QA & Verification Test Suite](#-comprehensive-qa--verification-test-suite)
@@ -141,6 +144,20 @@ Most online converter tools upload your confidential documents (Aadhaar cards, s
 - **🌙 Dark & Light Mode**: Built with Tailwind CSS v4 class-based theming. Detects system theme preference automatically and saves the user's manual choice in `localStorage`.
 - **📱 Fully Responsive**: Fluid, mobile-first design adapted for mobile phones, tablets, and large desktop screens.
 - **⚡ Zero Clutter**: Clean, accessible layout inspired by modern design principles.
+
+---
+
+## 📱 Android Application (APK)
+
+DocToolz is available as a native, lightweight, and hardware-accelerated Android APK for mobile users:
+
+- **📦 Ultra-Compact Size**: Under **1 MB** (Only ~901 KB download size)
+- **⚡ 100% Offline Capability**: Runs entirely on-device without internet access
+- **💾 Direct Local Storage**: Processed photos, merged PDFs, and compressed images save directly to your Android device's `Downloads/DocToolz` folder
+- **🎯 Full Hardware Acceleration**: Responsive touch controls, camera integration, and fast canvas rendering
+- **📱 Broad Android Compatibility**: Supports Android 7.0 (Nougat, API 24) through Android 15 (API 35)
+
+[📥 Download DocToolz v1.0.0 APK](https://github.com/chandan-itian/doctoolz/releases/download/v1.0.0/DocToolz-v1.0.0.apk) • [🏷️ View All Releases](https://github.com/chandan-itian/doctoolz/releases)
 
 ---
 

@@ -10,10 +10,10 @@ import { PDFDocument } from 'pdf-lib';
 import * as pdfjsLib from 'pdfjs-dist';
 import { encryptPDF } from '@pdfsmaller/pdf-encrypt';
 
-// Configure pdfjs worker if in browser
+// Configure pdfjs worker if in browser (prefers local bundle for offline Android & Web)
 if (typeof window !== 'undefined' && 'Worker' in window) {
   try {
-    pdfjsLib.GlobalWorkerOptions.workerSrc = `https://unpkg.com/pdfjs-dist@${pdfjsLib.version}/build/pdf.worker.min.mjs`;
+    pdfjsLib.GlobalWorkerOptions.workerSrc = './pdf.worker.min.mjs';
   } catch (e) {
     console.warn('PDF.js worker initialization notice:', e);
   }

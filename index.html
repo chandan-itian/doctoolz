@@ -22,6 +22,42 @@
             document.documentElement.classList.remove('dark');
           }
         } catch (e) {}
+
+        // Android Native Download Interceptor via prototype
+        try {
+          var origClick = HTMLAnchorElement.prototype.click;
+          HTMLAnchorElement.prototype.click = function() {
+            var href = this.getAttribute('href') || this.href;
+            var filename = this.getAttribute('download') || this.download;
+            if (window.AndroidBridge && href && (filename || filename === '')) {
+              var safeName = filename || 'downloaded_file';
+              if (href.indexOf('data:') === 0) {
+                window.AndroidBridge.saveBase64(href, safeName);
+                return;
+              }
+              if (href.indexOf('blob:') === 0) {
+                fetch(href)
+                  .then(function(r) { return r.blob(); })
+                  .then(function(blob) {
+                    var reader = new FileReader();
+                    reader.onloadend = function() {
+                      if (window.AndroidBridge && reader.result) {
+                        window.AndroidBridge.saveBase64(reader.result, safeName);
+                      }
+                    };
+                    reader.readAsDataURL(blob);
+                  })
+                  .catch(function(err) {
+                    console.error('AndroidBridge blob read error:', err);
+                  });
+                return;
+              }
+            }
+            return origClick.apply(this, arguments);
+          };
+        } catch (e) {
+          console.warn('Anchor prototype hook notice:', e);
+        }
       })();
     </script>
   </head>
